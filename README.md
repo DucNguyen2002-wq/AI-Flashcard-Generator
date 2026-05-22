@@ -66,13 +66,13 @@ ALTER PUBLICATION supabase_realtime ADD TABLE card_progress;
 
 ## Biến Môi Trường
 
-| Tên | Mô tả |
-|:----|:------|
-| `NEXT_PUBLIC_SUPABASE_URL` | URL Supabase project |
-| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Anon key |
-| `SUPABASE_SERVICE_ROLE_KEY` | Service role key (server only) |
-| `GEMINI_API_KEY` | Google Gemini API key |
-| `NEXT_PUBLIC_APP_URL` | URL production (vd: `http://178.128.50.79`) |
+| Tên                             | Mô tả                                       |
+| :------------------------------ | :------------------------------------------ |
+| `NEXT_PUBLIC_SUPABASE_URL`      | URL Supabase project                        |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Anon key                                    |
+| `SUPABASE_SERVICE_ROLE_KEY`     | Service role key (server only)              |
+| `GEMINI_API_KEY`                | Google Gemini API key                       |
+| `NEXT_PUBLIC_APP_URL`           | URL production (vd: `http://178.128.50.79`) |
 
 ## Chạy Tests
 
@@ -100,4 +100,3 @@ nano .env.production  # điền giá trị production
 # Deploy
 docker compose up -d --build
 ```
-

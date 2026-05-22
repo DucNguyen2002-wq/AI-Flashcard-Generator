@@ -10,7 +10,7 @@ echo "🚀 Bắt đầu deploy AI Flashcard Generator..."
 git pull origin main
 
 # Build lại Docker image
-docker compose build --no-cache
+docker compose build
 
 # Restart service
 docker compose down

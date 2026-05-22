@@ -35,7 +35,10 @@ function authOk() {
   mockGetUser.mockResolvedValue({ data: { user: USER }, error: null });
 }
 function authFail() {
-  mockGetUser.mockResolvedValue({ data: { user: null }, error: new Error("no auth") });
+  mockGetUser.mockResolvedValue({
+    data: { user: null },
+    error: new Error("no auth"),
+  });
 }
 
 // Build a chainable mock that owns a deck
@@ -101,7 +104,12 @@ describe("createFlashcard action (Phase 3)", () => {
 
   it("returns success when deck is owned and insert succeeds", async () => {
     authOk();
-    const fakeCard = { id: CARD_ID, question: "Q", answer: "A", deck_id: DECK_ID };
+    const fakeCard = {
+      id: CARD_ID,
+      question: "Q",
+      answer: "A",
+      deck_id: DECK_ID,
+    };
     let callCount = 0;
     mockFrom.mockImplementation(() => {
       callCount++;
@@ -120,12 +128,18 @@ describe("createFlashcard action (Phase 3)", () => {
     const fd = makeFormData({ deckId: DECK_ID, question: "Q", answer: "A" });
     const result = await createFlashcard(fd);
     expect(result.success).toBe(true);
-    expect((result as { flashcard: typeof fakeCard }).flashcard).toEqual(fakeCard);
+    expect((result as { flashcard: typeof fakeCard }).flashcard).toEqual(
+      fakeCard,
+    );
   });
 
   it("returns error for question longer than 500 chars", async () => {
     authOk();
-    const fd = makeFormData({ deckId: DECK_ID, question: "q".repeat(501), answer: "A" });
+    const fd = makeFormData({
+      deckId: DECK_ID,
+      question: "q".repeat(501),
+      answer: "A",
+    });
     const result = await createFlashcard(fd);
     expect(result.success).toBe(false);
     expect(result.error).toMatch(/500/);
@@ -138,21 +152,30 @@ describe("updateFlashcard action (Phase 3)", () => {
 
   it("returns error for invalid flashcard UUID", async () => {
     authOk();
-    const result = await updateFlashcard("not-uuid", makeFormData({ question: "Q", answer: "A" }));
+    const result = await updateFlashcard(
+      "not-uuid",
+      makeFormData({ question: "Q", answer: "A" }),
+    );
     expect(result.success).toBe(false);
     expect(result.error).toMatch(/ID/);
   });
 
   it("returns error when question is empty", async () => {
     authOk();
-    const result = await updateFlashcard(CARD_ID, makeFormData({ question: "", answer: "A" }));
+    const result = await updateFlashcard(
+      CARD_ID,
+      makeFormData({ question: "", answer: "A" }),
+    );
     expect(result.success).toBe(false);
   });
 
   it("returns error when flashcard not found", async () => {
     authOk();
     mockFrom.mockReturnValue(deckOwnedChain(null));
-    const result = await updateFlashcard(CARD_ID, makeFormData({ question: "Q", answer: "A" }));
+    const result = await updateFlashcard(
+      CARD_ID,
+      makeFormData({ question: "Q", answer: "A" }),
+    );
     expect(result.success).toBe(false);
     expect(result.error).toMatch(/tồn tại/);
   });
@@ -167,7 +190,9 @@ describe("updateFlashcard action (Phase 3)", () => {
         return {
           select: vi.fn().mockReturnThis(),
           eq: vi.fn().mockReturnThis(),
-          single: vi.fn().mockResolvedValue({ data: { deck_id: DECK_ID }, error: null }),
+          single: vi
+            .fn()
+            .mockResolvedValue({ data: { deck_id: DECK_ID }, error: null }),
         };
       }
       // update call
@@ -176,7 +201,10 @@ describe("updateFlashcard action (Phase 3)", () => {
         eq: vi.fn().mockResolvedValue({ error: null }),
       };
     });
-    const result = await updateFlashcard(CARD_ID, makeFormData({ question: "New Q", answer: "New A" }));
+    const result = await updateFlashcard(
+      CARD_ID,
+      makeFormData({ question: "New Q", answer: "New A" }),
+    );
     expect(result.success).toBe(true);
   });
 });
@@ -216,7 +244,9 @@ describe("saveGeneratedCards action (Phase 3)", () => {
 
   it("returns error for invalid deckId UUID", async () => {
     authOk();
-    const result = await saveGeneratedCards("bad", [{ question: "Q", answer: "A" }]);
+    const result = await saveGeneratedCards("bad", [
+      { question: "Q", answer: "A" },
+    ]);
     expect(result.success).toBe(false);
   });
 
@@ -229,7 +259,10 @@ describe("saveGeneratedCards action (Phase 3)", () => {
 
   it("returns error for cards array exceeding 20", async () => {
     authOk();
-    const cards = Array.from({ length: 21 }, (_, i) => ({ question: `Q${i}`, answer: `A${i}` }));
+    const cards = Array.from({ length: 21 }, (_, i) => ({
+      question: `Q${i}`,
+      answer: `A${i}`,
+    }));
     const result = await saveGeneratedCards(DECK_ID, cards);
     expect(result.success).toBe(false);
     expect(result.error).toMatch(/20/);
@@ -237,7 +270,9 @@ describe("saveGeneratedCards action (Phase 3)", () => {
 
   it("returns error when not authenticated", async () => {
     authFail();
-    const result = await saveGeneratedCards(DECK_ID, [{ question: "Q", answer: "A" }]);
+    const result = await saveGeneratedCards(DECK_ID, [
+      { question: "Q", answer: "A" },
+    ]);
     expect(result.success).toBe(false);
     expect(result.error).toMatch(/đăng nhập/);
   });
@@ -245,7 +280,9 @@ describe("saveGeneratedCards action (Phase 3)", () => {
   it("returns error when deck not owned", async () => {
     authOk();
     mockFrom.mockReturnValue(deckOwnedChain(null));
-    const result = await saveGeneratedCards(DECK_ID, [{ question: "Q", answer: "A" }]);
+    const result = await saveGeneratedCards(DECK_ID, [
+      { question: "Q", answer: "A" },
+    ]);
     expect(result.success).toBe(false);
     expect(result.error).toMatch(/quyền/);
   });

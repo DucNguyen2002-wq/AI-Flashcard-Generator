@@ -255,7 +255,9 @@ export async function uploadDocument(formData: FormData) {
     // PDF: use pdf-parse (server-side only)
     try {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const pdfParse = ((await import("pdf-parse")) as any).default as (buf: Buffer) => Promise<{ text: string }>;
+      const pdfParse = ((await import("pdf-parse")) as any).default as (
+        buf: Buffer,
+      ) => Promise<{ text: string }>;
       const buffer = Buffer.from(await file.arrayBuffer());
       const data = await pdfParse(buffer);
       text = data.text;

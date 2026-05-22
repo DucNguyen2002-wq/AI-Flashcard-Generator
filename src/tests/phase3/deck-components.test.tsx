@@ -68,7 +68,9 @@ describe("DeckCard component (Phase 3)", () => {
     const dueBadge = screen.getByText(/3 cần ôn/);
     expect(dueBadge).toBeInTheDocument();
     // Badge itself has animate-pulse class
-    expect(dueBadge.closest("[class*='animate-pulse']") ?? dueBadge).toBeTruthy();
+    expect(
+      dueBadge.closest("[class*='animate-pulse']") ?? dueBadge,
+    ).toBeTruthy();
   });
 
   it("does NOT render due badge when due_count is 0", () => {
@@ -78,7 +80,9 @@ describe("DeckCard component (Phase 3)", () => {
 
   it("wraps in a link to the deck page", () => {
     render(<DeckCard deck={sampleDeck} />);
-    const link = document.querySelector(`a[href="/dashboard/decks/${sampleDeck.id}"]`);
+    const link = document.querySelector(
+      `a[href="/dashboard/decks/${sampleDeck.id}"]`,
+    );
     expect(link).not.toBeNull();
   });
 
@@ -119,6 +123,8 @@ describe("DeckList component (Phase 3)", () => {
 
   it("does NOT show empty state when decks exist", () => {
     render(<DeckList decks={[sampleDeck]} />);
-    expect(screen.queryByText("Bạn chưa có bộ thẻ nào")).not.toBeInTheDocument();
+    expect(
+      screen.queryByText("Bạn chưa có bộ thẻ nào"),
+    ).not.toBeInTheDocument();
   });
 });

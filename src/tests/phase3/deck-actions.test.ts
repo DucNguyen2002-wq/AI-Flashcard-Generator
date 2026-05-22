@@ -30,7 +30,10 @@ function authOk() {
 }
 
 function authFail() {
-  mockGetUser.mockResolvedValue({ data: { user: null }, error: new Error("unauth") });
+  mockGetUser.mockResolvedValue({
+    data: { user: null },
+    error: new Error("unauth"),
+  });
 }
 
 // ─── createDeck ───────────────────────────────────────────────
@@ -80,7 +83,9 @@ describe("createDeck action (Phase 3)", () => {
     const chainMock = {
       insert: vi.fn().mockReturnThis(),
       select: vi.fn().mockReturnThis(),
-      single: vi.fn().mockResolvedValue({ data: null, error: { message: "DB error" } }),
+      single: vi
+        .fn()
+        .mockResolvedValue({ data: null, error: { message: "DB error" } }),
     };
     mockFrom.mockReturnValue(chainMock);
 
@@ -91,7 +96,11 @@ describe("createDeck action (Phase 3)", () => {
 
   it("accepts description up to 500 chars", async () => {
     authOk();
-    const fakeDeck = { id: VALID_UUID, title: "T", description: "d".repeat(500) };
+    const fakeDeck = {
+      id: VALID_UUID,
+      title: "T",
+      description: "d".repeat(500),
+    };
     const chainMock = {
       insert: vi.fn().mockReturnThis(),
       select: vi.fn().mockReturnThis(),
@@ -100,7 +109,7 @@ describe("createDeck action (Phase 3)", () => {
     mockFrom.mockReturnValue(chainMock);
 
     const result = await createDeck(
-      makeFormData({ title: "T", description: "d".repeat(500) })
+      makeFormData({ title: "T", description: "d".repeat(500) }),
     );
     expect(result.success).toBe(true);
   });
@@ -108,7 +117,7 @@ describe("createDeck action (Phase 3)", () => {
   it("returns error when description exceeds 500 chars", async () => {
     authOk();
     const result = await createDeck(
-      makeFormData({ title: "T", description: "d".repeat(501) })
+      makeFormData({ title: "T", description: "d".repeat(501) }),
     );
     expect(result.success).toBe(false);
     expect(result.error).toMatch(/500/);
@@ -151,11 +160,16 @@ describe("updateDeck action (Phase 3)", () => {
       update: vi.fn().mockReturnThis(),
       eq: vi.fn().mockReturnThis(),
       select: vi.fn().mockReturnThis(),
-      single: vi.fn().mockResolvedValue({ data: { id: VALID_UUID }, error: null }),
+      single: vi
+        .fn()
+        .mockResolvedValue({ data: { id: VALID_UUID }, error: null }),
     };
     mockFrom.mockReturnValue(chainMock);
 
-    const result = await updateDeck(VALID_UUID, makeFormData({ title: "Updated" }));
+    const result = await updateDeck(
+      VALID_UUID,
+      makeFormData({ title: "Updated" }),
+    );
     expect(result.success).toBe(true);
   });
 });

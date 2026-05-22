@@ -1,6 +1,13 @@
 "use client";
 
-import { ResponsiveContainer, PieChart, Pie, Cell, Tooltip, Legend } from "recharts";
+import {
+  ResponsiveContainer,
+  PieChart,
+  Pie,
+  Cell,
+  Tooltip,
+  Legend,
+} from "recharts";
 import type { CardStatusStats } from "@/actions/stats.actions";
 
 interface CardStatusChartProps {
@@ -35,7 +42,9 @@ function CustomTooltip({
   return (
     <div className="rounded-lg border bg-background px-3 py-2 shadow-md text-sm">
       <p className="font-medium">{item.name}</p>
-      <p className="text-muted-foreground">{item.value} thẻ ({pct}%)</p>
+      <p className="text-muted-foreground">
+        {item.value} thẻ ({pct}%)
+      </p>
     </div>
   );
 }

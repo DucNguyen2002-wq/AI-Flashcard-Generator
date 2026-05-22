@@ -24,7 +24,10 @@ function authOk() {
   mockGetUser.mockResolvedValue({ data: { user: USER }, error: null });
 }
 function authFail() {
-  mockGetUser.mockResolvedValue({ data: { user: null }, error: new Error("unauth") });
+  mockGetUser.mockResolvedValue({
+    data: { user: null },
+    error: new Error("unauth"),
+  });
 }
 
 // ─── updateCardProgress ───────────────────────────────────────
@@ -85,7 +88,9 @@ describe("updateCardProgress (Phase 3)", () => {
         return {
           select: vi.fn().mockReturnThis(),
           eq: vi.fn().mockReturnThis(),
-          single: vi.fn().mockResolvedValue({ data: existingProgress, error: null }),
+          single: vi
+            .fn()
+            .mockResolvedValue({ data: existingProgress, error: null }),
         };
       }
       return { upsert: upsertMock };
@@ -111,7 +116,11 @@ describe("updateCardProgress (Phase 3)", () => {
           single: vi.fn().mockResolvedValue({ data: null, error: null }),
         };
       }
-      return { upsert: vi.fn().mockResolvedValue({ error: { message: "upsert failed" } }) };
+      return {
+        upsert: vi
+          .fn()
+          .mockResolvedValue({ error: { message: "upsert failed" } }),
+      };
     });
 
     const result = await updateCardProgress(CARD_ID, 4 as SM2Grade);
@@ -137,7 +146,9 @@ describe("updateCardProgress (Phase 3)", () => {
         return {
           select: vi.fn().mockReturnThis(),
           eq: vi.fn().mockReturnThis(),
-          single: vi.fn().mockResolvedValue({ data: existingProgress, error: null }),
+          single: vi
+            .fn()
+            .mockResolvedValue({ data: existingProgress, error: null }),
         };
       }
       return { upsert: upsertMock };
@@ -189,7 +200,9 @@ describe("getStudyCards (Phase 3)", () => {
         return {
           select: vi.fn().mockReturnThis(),
           eq: vi.fn().mockReturnThis(),
-          single: vi.fn().mockResolvedValue({ data: { id: DECK_ID }, error: null }),
+          single: vi
+            .fn()
+            .mockResolvedValue({ data: { id: DECK_ID }, error: null }),
         };
       }
       if (callCount === 2) {
@@ -209,8 +222,20 @@ describe("getStudyCards (Phase 3)", () => {
   it("returns cards with no progress (new cards) as due", async () => {
     authOk();
     const cards = [
-      { id: "c1", deck_id: DECK_ID, question: "Q1", answer: "A1", created_at: "2024-01-01" },
-      { id: "c2", deck_id: DECK_ID, question: "Q2", answer: "A2", created_at: "2024-01-02" },
+      {
+        id: "c1",
+        deck_id: DECK_ID,
+        question: "Q1",
+        answer: "A1",
+        created_at: "2024-01-01",
+      },
+      {
+        id: "c2",
+        deck_id: DECK_ID,
+        question: "Q2",
+        answer: "A2",
+        created_at: "2024-01-02",
+      },
     ];
     let callCount = 0;
     mockFrom.mockImplementation(() => {
@@ -219,7 +244,9 @@ describe("getStudyCards (Phase 3)", () => {
         return {
           select: vi.fn().mockReturnThis(),
           eq: vi.fn().mockReturnThis(),
-          single: vi.fn().mockResolvedValue({ data: { id: DECK_ID }, error: null }),
+          single: vi
+            .fn()
+            .mockResolvedValue({ data: { id: DECK_ID }, error: null }),
         };
       }
       if (callCount === 2) {
@@ -248,7 +275,13 @@ describe("getStudyCards (Phase 3)", () => {
   it("excludes cards not yet due (next_review_at in the future)", async () => {
     authOk();
     const cards = [
-      { id: "c1", deck_id: DECK_ID, question: "Q1", answer: "A1", created_at: "2024-01-01" },
+      {
+        id: "c1",
+        deck_id: DECK_ID,
+        question: "Q1",
+        answer: "A1",
+        created_at: "2024-01-01",
+      },
     ];
     const futureDate = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString();
     const progress = [
@@ -268,7 +301,9 @@ describe("getStudyCards (Phase 3)", () => {
         return {
           select: vi.fn().mockReturnThis(),
           eq: vi.fn().mockReturnThis(),
-          single: vi.fn().mockResolvedValue({ data: { id: DECK_ID }, error: null }),
+          single: vi
+            .fn()
+            .mockResolvedValue({ data: { id: DECK_ID }, error: null }),
         };
       }
       if (callCount === 2) {
@@ -295,7 +330,13 @@ describe("getStudyCards (Phase 3)", () => {
   it("includes cards where next_review_at is in the past", async () => {
     authOk();
     const cards = [
-      { id: "c1", deck_id: DECK_ID, question: "Q1", answer: "A1", created_at: "2024-01-01" },
+      {
+        id: "c1",
+        deck_id: DECK_ID,
+        question: "Q1",
+        answer: "A1",
+        created_at: "2024-01-01",
+      },
     ];
     const pastDate = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
     const progress = [
@@ -315,7 +356,9 @@ describe("getStudyCards (Phase 3)", () => {
         return {
           select: vi.fn().mockReturnThis(),
           eq: vi.fn().mockReturnThis(),
-          single: vi.fn().mockResolvedValue({ data: { id: DECK_ID }, error: null }),
+          single: vi
+            .fn()
+            .mockResolvedValue({ data: { id: DECK_ID }, error: null }),
         };
       }
       if (callCount === 2) {

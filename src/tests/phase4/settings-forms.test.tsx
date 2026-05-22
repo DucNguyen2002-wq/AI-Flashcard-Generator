@@ -1,6 +1,15 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { render, screen, fireEvent, waitFor, act } from "@testing-library/react";
-import { PasswordChangeForm, DangerZone } from "@/components/settings/settings-forms";
+import {
+  render,
+  screen,
+  fireEvent,
+  waitFor,
+  act,
+} from "@testing-library/react";
+import {
+  PasswordChangeForm,
+  DangerZone,
+} from "@/components/settings/settings-forms";
 
 // ─── Mocks ─────────────────────────────────────────────────────
 const mockUpdateUser = vi.fn();
@@ -93,9 +102,7 @@ describe("PasswordChangeForm component (Phase 4)", () => {
       target: { value: "different456" },
     });
     fireEvent.click(screen.getByRole("button", { name: /Cập nhật mật khẩu/ }));
-    expect(mockToastError).toHaveBeenCalledWith(
-      "Mật khẩu xác nhận không khớp",
-    );
+    expect(mockToastError).toHaveBeenCalledWith("Mật khẩu xác nhận không khớp");
     expect(mockUpdateUser).not.toHaveBeenCalled();
   });
 
@@ -203,10 +210,9 @@ describe("DangerZone component (Phase 4)", () => {
 
   it("confirm button is disabled when email does not match", () => {
     render(<DangerZone email={USER_EMAIL} />);
-    fireEvent.change(
-      screen.getByLabelText("Xác nhận email để xóa tài khoản"),
-      { target: { value: "wrong@example.com" } },
-    );
+    fireEvent.change(screen.getByLabelText("Xác nhận email để xóa tài khoản"), {
+      target: { value: "wrong@example.com" },
+    });
     const buttons = screen.getAllByRole("button", { name: /Xóa tài khoản/ });
     // The confirm button (last) must be disabled when email doesn't match
     expect(buttons[buttons.length - 1]).toBeDisabled();
@@ -215,10 +221,9 @@ describe("DangerZone component (Phase 4)", () => {
   it("calls signOut when confirmation email matches", async () => {
     mockSignOut.mockResolvedValue({ error: null });
     render(<DangerZone email={USER_EMAIL} />);
-    fireEvent.change(
-      screen.getByLabelText("Xác nhận email để xóa tài khoản"),
-      { target: { value: USER_EMAIL } },
-    );
+    fireEvent.change(screen.getByLabelText("Xác nhận email để xóa tài khoản"), {
+      target: { value: USER_EMAIL },
+    });
     // The confirm button should be enabled when email matches
     const buttons = screen.getAllByRole("button", { name: /Xóa tài khoản/ });
     await act(async () => {
@@ -232,10 +237,9 @@ describe("DangerZone component (Phase 4)", () => {
   it("shows success toast after account deletion", async () => {
     mockSignOut.mockResolvedValue({ error: null });
     render(<DangerZone email={USER_EMAIL} />);
-    fireEvent.change(
-      screen.getByLabelText("Xác nhận email để xóa tài khoản"),
-      { target: { value: USER_EMAIL } },
-    );
+    fireEvent.change(screen.getByLabelText("Xác nhận email để xóa tài khoản"), {
+      target: { value: USER_EMAIL },
+    });
     const buttons = screen.getAllByRole("button", { name: /Xóa tài khoản/ });
     await act(async () => {
       fireEvent.click(buttons[buttons.length - 1]!);
@@ -248,10 +252,9 @@ describe("DangerZone component (Phase 4)", () => {
   it("shows error toast when signOut fails", async () => {
     mockSignOut.mockResolvedValue({ error: { message: "Network error" } });
     render(<DangerZone email={USER_EMAIL} />);
-    fireEvent.change(
-      screen.getByLabelText("Xác nhận email để xóa tài khoản"),
-      { target: { value: USER_EMAIL } },
-    );
+    fireEvent.change(screen.getByLabelText("Xác nhận email để xóa tài khoản"), {
+      target: { value: USER_EMAIL },
+    });
     const buttons = screen.getAllByRole("button", { name: /Xóa tài khoản/ });
     await act(async () => {
       fireEvent.click(buttons[buttons.length - 1]!);

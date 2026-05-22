@@ -162,7 +162,11 @@ describe("getCardStatusStats (Phase 4)", () => {
         return makeQuery({ count: 3, data: null, error: null });
       if (table === "card_progress")
         return makeQuery({
-          data: [{ interval_days: 7 }, { interval_days: 14 }, { interval_days: 20 }],
+          data: [
+            { interval_days: 7 },
+            { interval_days: 14 },
+            { interval_days: 20 },
+          ],
           error: null,
         });
       return makeQuery({ data: null });
@@ -199,7 +203,7 @@ describe("getCardStatusStats (Phase 4)", () => {
       if (table === "card_progress")
         return makeQuery({
           data: [
-            { interval_days: 3 },  // learning
+            { interval_days: 3 }, // learning
             { interval_days: 10 }, // review
             { interval_days: 25 }, // mastered
           ],

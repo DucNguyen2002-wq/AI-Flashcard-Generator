@@ -16,7 +16,11 @@ vi.mock("@/lib/supabase/server", () => ({
 // ─── Helpers ──────────────────────────────────────────────────
 const DECK_ID = "123e4567-e89b-12d3-a456-426614174000";
 const USER = { id: "user-gen", email: "gen@test.com" };
-const VALID_BODY = { text: "React is a JavaScript library", count: 5, deckId: DECK_ID };
+const VALID_BODY = {
+  text: "React is a JavaScript library",
+  count: 5,
+  deckId: DECK_ID,
+};
 
 function makeRequest(body: unknown): NextRequest {
   return new NextRequest("http://localhost/api/generate", {
@@ -31,7 +35,10 @@ function authOk() {
 }
 
 function authFail() {
-  mockGetUser.mockResolvedValue({ data: { user: null }, error: new Error("no auth") });
+  mockGetUser.mockResolvedValue({
+    data: { user: null },
+    error: new Error("no auth"),
+  });
 }
 
 function deckExists() {
@@ -125,7 +132,9 @@ describe("POST /api/generate (Phase 3)", () => {
 
   it("returns 400 when text exceeds 5000 chars", async () => {
     authOk();
-    const res = await POST(makeRequest({ text: "x".repeat(5001), count: 5, deckId: DECK_ID }));
+    const res = await POST(
+      makeRequest({ text: "x".repeat(5001), count: 5, deckId: DECK_ID }),
+    );
     expect(res.status).toBe(400);
     const json = await res.json();
     expect(json.error).toMatch(/5000/);
@@ -133,13 +142,17 @@ describe("POST /api/generate (Phase 3)", () => {
 
   it("returns 400 for invalid count value (7 is not 5|10|15|20)", async () => {
     authOk();
-    const res = await POST(makeRequest({ text: "content", count: 7, deckId: DECK_ID }));
+    const res = await POST(
+      makeRequest({ text: "content", count: 7, deckId: DECK_ID }),
+    );
     expect(res.status).toBe(400);
   });
 
   it("returns 400 for invalid deckId (not UUID)", async () => {
     authOk();
-    const res = await POST(makeRequest({ text: "content", count: 5, deckId: "bad" }));
+    const res = await POST(
+      makeRequest({ text: "content", count: 5, deckId: "bad" }),
+    );
     expect(res.status).toBe(400);
     const json = await res.json();
     expect(json.error).toMatch(/deckId/);
@@ -199,7 +212,9 @@ describe("POST /api/generate (Phase 3)", () => {
           candidates: [
             {
               content: {
-                parts: [{ text: "```json\n" + JSON.stringify(cards) + "\n```" }],
+                parts: [
+                  { text: "```json\n" + JSON.stringify(cards) + "\n```" },
+                ],
               },
             },
           ],

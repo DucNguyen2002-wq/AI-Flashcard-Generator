@@ -9,7 +9,10 @@ import {
 } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { PasswordChangeForm, DangerZone } from "@/components/settings/settings-forms";
+import {
+  PasswordChangeForm,
+  DangerZone,
+} from "@/components/settings/settings-forms";
 
 export default async function SettingsPage() {
   const supabase = await createClient();
@@ -19,10 +22,8 @@ export default async function SettingsPage() {
 
   if (!user) redirect("/login");
 
-  const initials = (user.email ?? "U")
-    .split("@")[0]
-    ?.slice(0, 2)
-    .toUpperCase() ?? "U";
+  const initials =
+    (user.email ?? "U").split("@")[0]?.slice(0, 2).toUpperCase() ?? "U";
 
   return (
     <div className="space-y-6 max-w-2xl">
@@ -49,7 +50,8 @@ export default async function SettingsPage() {
           <div className="space-y-1">
             <p className="font-medium">{user.email}</p>
             <p className="text-sm text-muted-foreground">
-              Tham gia từ {new Date(user.created_at).toLocaleDateString("vi-VN")}
+              Tham gia từ{" "}
+              {new Date(user.created_at).toLocaleDateString("vi-VN")}
             </p>
           </div>
         </CardContent>

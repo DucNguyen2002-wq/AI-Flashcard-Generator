@@ -9,12 +9,7 @@ import {
   getCardStatusStats,
   getStudyStreak,
 } from "@/actions/stats.actions";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import type { DeckWithCount } from "@/types";
 
 export default async function DashboardPage() {
@@ -54,7 +49,10 @@ export default async function DashboardPage() {
   }) as DeckWithCount[];
 
   const totalDecks = decks.length;
-  const totalFlashcards = decks.reduce((sum, d) => sum + (d.flashcard_count ?? 0), 0);
+  const totalFlashcards = decks.reduce(
+    (sum, d) => sum + (d.flashcard_count ?? 0),
+    0,
+  );
   const dueToday = dueResult.count ?? 0;
 
   return (

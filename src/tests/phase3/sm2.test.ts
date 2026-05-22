@@ -46,7 +46,12 @@ describe("calculateSM2 (Phase 3)", () => {
   });
 
   it("grade 3 on second rep: interval = 6, repetitions = 2", () => {
-    const result = calculateSM2({ ...defaults, repetitions: 1, intervalDays: 1, grade: 3 });
+    const result = calculateSM2({
+      ...defaults,
+      repetitions: 1,
+      intervalDays: 1,
+      grade: 3,
+    });
     expect(result.intervalDays).toBe(6);
     expect(result.repetitions).toBe(2);
   });
@@ -70,7 +75,12 @@ describe("calculateSM2 (Phase 3)", () => {
     // Simulate many grade 1s from a low EF
     let ef = 1.3;
     for (let i = 0; i < 5; i++) {
-      const result = calculateSM2({ easeFactor: ef, intervalDays: 1, repetitions: 0, grade: 1 });
+      const result = calculateSM2({
+        easeFactor: ef,
+        intervalDays: 1,
+        repetitions: 0,
+        grade: 1,
+      });
       ef = result.easeFactor;
       expect(ef).toBeGreaterThanOrEqual(1.3);
     }
@@ -102,7 +112,9 @@ describe("calculateSM2 (Phase 3)", () => {
   it("nextReviewAt approx equals Date.now() + intervalDays * 86400000", () => {
     const result = calculateSM2({ ...defaults, grade: 4 });
     const expected = Date.now() + result.intervalDays * 24 * 60 * 60 * 1000;
-    expect(Math.abs(result.nextReviewAt.getTime() - expected)).toBeLessThan(1000);
+    expect(Math.abs(result.nextReviewAt.getTime() - expected)).toBeLessThan(
+      1000,
+    );
   });
 
   // ── Reset after incorrect then correct ────────────────────

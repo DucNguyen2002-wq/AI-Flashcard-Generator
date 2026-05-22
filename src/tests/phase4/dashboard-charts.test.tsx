@@ -7,11 +7,9 @@ import type { DailyStudyStat, CardStatusStats } from "@/actions/stats.actions";
 // ─── Mock Recharts ─────────────────────────────────────────────
 // Recharts uses SVG APIs unavailable in jsdom — replace with simple divs.
 vi.mock("recharts", () => ({
-  ResponsiveContainer: ({
-    children,
-  }: {
-    children: React.ReactNode;
-  }) => <div data-testid="responsive-container">{children}</div>,
+  ResponsiveContainer: ({ children }: { children: React.ReactNode }) => (
+    <div data-testid="responsive-container">{children}</div>
+  ),
   AreaChart: ({ children }: { children: React.ReactNode }) => (
     <div data-testid="area-chart">{children}</div>
   ),
@@ -67,9 +65,7 @@ const ACTIVE_STATUS: CardStatusStats = {
 describe("StudyChart component (Phase 4)", () => {
   it("shows empty state message when all counts are zero", () => {
     render(<StudyChart data={EMPTY_DAILY} />);
-    expect(
-      screen.getByText(/Chưa có dữ liệu học tập/),
-    ).toBeInTheDocument();
+    expect(screen.getByText(/Chưa có dữ liệu học tập/)).toBeInTheDocument();
   });
 
   it("does not show empty state when data has non-zero values", () => {

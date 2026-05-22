@@ -129,6 +129,7 @@ curl -I https://flashcard.example.com
 ```
 
 Cập nhật `.env.production`:
+
 ```env
 NEXT_PUBLIC_APP_URL=https://flashcard.example.com
 ```

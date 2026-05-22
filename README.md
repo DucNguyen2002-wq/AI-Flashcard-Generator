@@ -1,36 +1,103 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# AI Flashcard Generator
 
-## Getting Started
+Ứng dụng web tạo flashcard tự động bằng AI, hỗ trợ học theo Spaced Repetition (SM-2).
 
-First, run the development server:
+## Tech Stack
+
+- **Next.js 15** (App Router) + TypeScript
+- **Tailwind CSS v4** + shadcn/ui
+- **Supabase** (Auth + PostgreSQL + Storage + Realtime)
+- **Google Gemini 2.0 Flash** — sinh flashcard tự động từ văn bản/PDF
+- **Recharts** — biểu đồ thống kê học tập
+- **Docker** + Docker Compose — đóng gói và triển khai
+
+## Tính năng
+
+- ✅ Đăng ký / đăng nhập (email + Google OAuth)
+- ✅ Tạo và quản lý bộ thẻ (deck)
+- ✅ Sinh flashcard tự động bằng AI từ văn bản hoặc file PDF
+- ✅ Học flashcard theo thuật toán Spaced Repetition SM-2
+- ✅ Dashboard thống kê: KPI, biểu đồ hoạt động 7 ngày, phân loại thẻ
+- ✅ Đồng bộ Realtime qua Supabase
+- ✅ Dark mode
+- ✅ Cài đặt tài khoản: đổi mật khẩu, xóa tài khoản
+
+## Yêu cầu
+
+- Node.js 20+
+- Docker & Docker Compose (cho production)
+- Tài khoản [Supabase](https://supabase.com)
+- [Gemini API Key](https://aistudio.google.com)
+
+## Cài đặt Local
 
 ```bash
+git clone https://github.com/DucNguyen2002-wq/AI-Flashcard-Generator.git
+cd AI-Flashcard-Generator
+npm install
+cp .env.example .env.local
+# Điền các biến môi trường vào .env.local
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Truy cập [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Chạy bằng Docker
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+cp .env.example .env.production
+# Điền đầy đủ các biến môi trường vào .env.production
+docker compose up --build
+```
 
-## Learn More
+## Setup Supabase
 
-To learn more about Next.js, take a look at the following resources:
+1. Tạo project tại [https://supabase.com](https://supabase.com)
+2. Chạy migration trong Supabase SQL Editor:
+   - `supabase/migrations/001_initial_schema.sql`
+   - `supabase/migrations/002_storage_bucket.sql`
+3. Bật Realtime cho bảng `card_progress`:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```sql
+ALTER PUBLICATION supabase_realtime ADD TABLE card_progress;
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+4. Bật Google OAuth: **Authentication → Providers → Google**
 
-## Deploy on Vercel
+## Biến Môi Trường
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+| Tên | Mô tả |
+|:----|:------|
+| `NEXT_PUBLIC_SUPABASE_URL` | URL Supabase project |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Anon key |
+| `SUPABASE_SERVICE_ROLE_KEY` | Service role key (server only) |
+| `GEMINI_API_KEY` | Google Gemini API key |
+| `NEXT_PUBLIC_APP_URL` | URL production (vd: `http://178.128.50.79`) |
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Chạy Tests
+
+```bash
+npm run test          # chạy một lần
+npm run test:watch    # chế độ watch
+```
+
+## Deploy lên VPS
+
+Xem hướng dẫn chi tiết trong [docs/deployment.md](docs/deployment.md).
+
+**Tóm tắt nhanh:**
+
+```bash
+# SSH vào VPS
+ssh root@178.128.50.79
+
+# Clone và cấu hình
+git clone https://github.com/DucNguyen2002-wq/AI-Flashcard-Generator.git
+cd AI-Flashcard-Generator
+cp .env.example .env.production
+nano .env.production  # điền giá trị production
+
+# Deploy
+docker compose up -d --build
+```
+

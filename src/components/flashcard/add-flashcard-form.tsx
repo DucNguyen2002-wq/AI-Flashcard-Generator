@@ -1,37 +1,37 @@
-"use client"
+"use client";
 
-import { useState, useTransition, useRef } from "react"
-import { Plus, X } from "lucide-react"
-import { toast } from "sonner"
-import { Button } from "@/components/ui/button"
-import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
-import { createFlashcard } from "@/actions/flashcard.actions"
+import { useState, useTransition, useRef } from "react";
+import { Plus, X } from "lucide-react";
+import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { createFlashcard } from "@/actions/flashcard.actions";
 
 interface AddFlashcardFormProps {
-  deckId: string
+  deckId: string;
 }
 
 export function AddFlashcardForm({ deckId }: AddFlashcardFormProps) {
-  const [open, setOpen] = useState(false)
-  const [isPending, startTransition] = useTransition()
-  const formRef = useRef<HTMLFormElement>(null)
+  const [open, setOpen] = useState(false);
+  const [isPending, startTransition] = useTransition();
+  const formRef = useRef<HTMLFormElement>(null);
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault()
-    const formData = new FormData(e.currentTarget)
-    formData.set("deckId", deckId)
+    e.preventDefault();
+    const formData = new FormData(e.currentTarget);
+    formData.set("deckId", deckId);
 
     startTransition(async () => {
-      const result = await createFlashcard(formData)
+      const result = await createFlashcard(formData);
       if (result.success) {
-        toast.success("Thêm flashcard thành công!")
-        formRef.current?.reset()
-        setOpen(false)
+        toast.success("Thêm flashcard thành công!");
+        formRef.current?.reset();
+        setOpen(false);
       } else {
-        toast.error(result.error ?? "Thêm flashcard thất bại")
+        toast.error(result.error ?? "Thêm flashcard thất bại");
       }
-    })
+    });
   }
 
   if (!open) {
@@ -40,7 +40,7 @@ export function AddFlashcardForm({ deckId }: AddFlashcardFormProps) {
         <Plus className="mr-2 h-4 w-4" />
         Thêm thẻ thủ công
       </Button>
-    )
+    );
   }
 
   return (
@@ -94,5 +94,5 @@ export function AddFlashcardForm({ deckId }: AddFlashcardFormProps) {
         </div>
       </form>
     </div>
-  )
+  );
 }

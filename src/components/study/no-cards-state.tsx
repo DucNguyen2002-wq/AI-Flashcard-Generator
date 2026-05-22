@@ -1,12 +1,12 @@
-import Link from "next/link"
-import { CheckCircle2 } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { format } from "date-fns"
-import { vi } from "date-fns/locale"
+import Link from "next/link";
+import { CheckCircle2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { format } from "date-fns";
+import { vi } from "date-fns/locale";
 
 interface NoCardsStateProps {
-  deckId: string
-  nextReviewAt: string | null
+  deckId: string;
+  nextReviewAt: string | null;
 }
 
 export function NoCardsState({ deckId, nextReviewAt }: NoCardsStateProps) {
@@ -24,11 +24,13 @@ export function NoCardsState({ deckId, nextReviewAt }: NoCardsStateProps) {
           </span>
         </p>
       ) : (
-        <p className="text-muted-foreground">Chưa có thẻ nào trong bộ thẻ này.</p>
+        <p className="text-muted-foreground">
+          Chưa có thẻ nào trong bộ thẻ này.
+        </p>
       )}
       <Link href={`/dashboard/decks/${deckId}`}>
         <Button variant="outline">Quay về bộ thẻ</Button>
       </Link>
     </div>
-  )
+  );
 }

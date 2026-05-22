@@ -1,134 +1,141 @@
-"use client"
+"use client";
 
-import { useState, useRef, useTransition, useCallback } from "react"
-import { useRouter } from "next/navigation"
-import { Upload, X, Loader2, CheckSquare, Square, Save } from "lucide-react"
-import { toast } from "sonner"
-import { Button } from "@/components/ui/button"
-import { Textarea } from "@/components/ui/textarea"
-import { Label } from "@/components/ui/label"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { saveGeneratedCards, uploadDocument } from "@/actions/flashcard.actions"
-import type { GeneratedCard } from "@/types"
+import { useState, useRef, useTransition, useCallback } from "react";
+import { useRouter } from "next/navigation";
+import { Upload, X, Loader2, CheckSquare, Square, Save } from "lucide-react";
+import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import {
+  saveGeneratedCards,
+  uploadDocument,
+} from "@/actions/flashcard.actions";
+import type { GeneratedCard } from "@/types";
 
 interface GenerateFormProps {
-  deckId: string
+  deckId: string;
 }
 
-const COUNT_OPTIONS = [5, 10, 15, 20] as const
+const COUNT_OPTIONS = [5, 10, 15, 20] as const;
 
 export function GenerateForm({ deckId }: GenerateFormProps) {
-  const router = useRouter()
-  const [text, setText] = useState("")
-  const [count, setCount] = useState<5 | 10 | 15 | 20>(10)
-  const [isGenerating, setIsGenerating] = useState(false)
-  const [isSaving, startSaveTransition] = useTransition()
-  const [cards, setCards] = useState<GeneratedCard[]>([])
-  const [file, setFile] = useState<File | null>(null)
-  const [isUploading, setIsUploading] = useState(false)
-  const fileInputRef = useRef<HTMLInputElement>(null)
+  const router = useRouter();
+  const [text, setText] = useState("");
+  const [count, setCount] = useState<5 | 10 | 15 | 20>(10);
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [isSaving, startSaveTransition] = useTransition();
+  const [cards, setCards] = useState<GeneratedCard[]>([]);
+  const [file, setFile] = useState<File | null>(null);
+  const [isUploading, setIsUploading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const charCount = text.length
-  const isOverLimit = charCount > 5000
+  const charCount = text.length;
+  const isOverLimit = charCount > 5000;
 
   // ── File handling ─────────────────────────────────────────
   function handleFileChange(selected: File | null) {
-    if (!selected) return
+    if (!selected) return;
     if (selected.size > 5 * 1024 * 1024) {
-      toast.error("File không được vượt quá 5MB")
-      return
+      toast.error("File không được vượt quá 5MB");
+      return;
     }
     if (!["application/pdf", "text/plain"].includes(selected.type)) {
-      toast.error("Chỉ hỗ trợ file PDF hoặc TXT")
-      return
+      toast.error("Chỉ hỗ trợ file PDF hoặc TXT");
+      return;
     }
-    setFile(selected)
+    setFile(selected);
   }
 
   async function handleExtract() {
-    if (!file) return
-    setIsUploading(true)
+    if (!file) return;
+    setIsUploading(true);
     try {
-      const fd = new FormData()
-      fd.append("file", file)
-      fd.append("deckId", deckId)
-      const result = await uploadDocument(fd)
+      const fd = new FormData();
+      fd.append("file", file);
+      fd.append("deckId", deckId);
+      const result = await uploadDocument(fd);
       if (result.success && result.text) {
-        setText(result.text.slice(0, 5000))
-        toast.success("Đọc file thành công!")
+        setText(result.text.slice(0, 5000));
+        toast.success("Đọc file thành công!");
       } else {
-        toast.error((result as { error?: string }).error ?? "Không thể đọc file")
+        toast.error(
+          (result as { error?: string }).error ?? "Không thể đọc file",
+        );
       }
     } finally {
-      setIsUploading(false)
+      setIsUploading(false);
     }
   }
 
   function onDrop(e: React.DragEvent) {
-    e.preventDefault()
-    const dropped = e.dataTransfer.files[0]
-    if (dropped) handleFileChange(dropped)
+    e.preventDefault();
+    const dropped = e.dataTransfer.files[0];
+    if (dropped) handleFileChange(dropped);
   }
 
   // ── Generate ──────────────────────────────────────────────
   async function handleGenerate() {
-    if (!text.trim() || isOverLimit) return
-    setIsGenerating(true)
-    setCards([])
+    if (!text.trim() || isOverLimit) return;
+    setIsGenerating(true);
+    setCards([]);
     try {
       const res = await fetch("/api/generate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ text, count, deckId }),
-      })
-      const data = await res.json()
+      });
+      const data = await res.json();
       if (!res.ok) {
-        toast.error(data.error ?? "Sinh flashcard thất bại")
-        return
+        toast.error(data.error ?? "Sinh flashcard thất bại");
+        return;
       }
       const generated: GeneratedCard[] = data.map(
-        (c: { question: string; answer: string }) => ({ ...c, selected: true })
-      )
-      setCards(generated)
+        (c: { question: string; answer: string }) => ({ ...c, selected: true }),
+      );
+      setCards(generated);
     } catch {
-      toast.error("Không thể kết nối đến server")
+      toast.error("Không thể kết nối đến server");
     } finally {
-      setIsGenerating(false)
+      setIsGenerating(false);
     }
   }
 
   // ── Select all / deselect ─────────────────────────────────
-  const allSelected = cards.every((c) => c.selected)
+  const allSelected = cards.every((c) => c.selected);
   function toggleAll() {
-    setCards((prev) => prev.map((c) => ({ ...c, selected: !allSelected })))
+    setCards((prev) => prev.map((c) => ({ ...c, selected: !allSelected })));
   }
   function toggleCard(idx: number) {
-    setCards((prev) => prev.map((c, i) => (i === idx ? { ...c, selected: !c.selected } : c)))
+    setCards((prev) =>
+      prev.map((c, i) => (i === idx ? { ...c, selected: !c.selected } : c)),
+    );
   }
 
   // ── Save ──────────────────────────────────────────────────
-  const selectedCards = cards.filter((c) => c.selected)
+  const selectedCards = cards.filter((c) => c.selected);
   function handleSave() {
     if (selectedCards.length === 0) {
-      toast.error("Vui lòng chọn ít nhất 1 thẻ")
-      return
+      toast.error("Vui lòng chọn ít nhất 1 thẻ");
+      return;
     }
     startSaveTransition(async () => {
-      const result = await saveGeneratedCards(deckId, selectedCards)
+      const result = await saveGeneratedCards(deckId, selectedCards);
       if (result.success) {
-        toast.success(`Đã lưu ${result.count} thẻ vào bộ thẻ!`)
-        router.push(`/dashboard/decks/${deckId}`)
+        toast.success(`Đã lưu ${result.count} thẻ vào bộ thẻ!`);
+        router.push(`/dashboard/decks/${deckId}`);
       } else {
-        toast.error((result as { error?: string }).error ?? "Lưu thất bại")
+        toast.error((result as { error?: string }).error ?? "Lưu thất bại");
       }
-    })
+    });
   }
 
   const formatFileSize = useCallback((bytes: number) => {
-    if (bytes < 1024) return `${bytes} B`
-    if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`
-    return `${(bytes / (1024 * 1024)).toFixed(1)} MB`
-  }, [])
+    if (bytes < 1024) return `${bytes} B`;
+    if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
+    return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+  }, []);
 
   return (
     <div className="space-y-6">
@@ -146,7 +153,11 @@ export function GenerateForm({ deckId }: GenerateFormProps) {
               value={text}
               onChange={(e) => setText(e.target.value)}
               rows={10}
-              className={isOverLimit ? "border-destructive focus-visible:ring-destructive" : ""}
+              className={
+                isOverLimit
+                  ? "border-destructive focus-visible:ring-destructive"
+                  : ""
+              }
               disabled={isGenerating}
             />
             <span
@@ -170,8 +181,12 @@ export function GenerateForm({ deckId }: GenerateFormProps) {
             >
               <Upload className="h-8 w-8 text-muted-foreground" />
               <div className="text-center">
-                <p className="text-sm font-medium">Kéo thả file PDF hoặc TXT vào đây</p>
-                <p className="text-xs text-muted-foreground">hoặc nhấn để chọn file (tối đa 5MB)</p>
+                <p className="text-sm font-medium">
+                  Kéo thả file PDF hoặc TXT vào đây
+                </p>
+                <p className="text-xs text-muted-foreground">
+                  hoặc nhấn để chọn file (tối đa 5MB)
+                </p>
               </div>
               <input
                 ref={fileInputRef}
@@ -185,7 +200,9 @@ export function GenerateForm({ deckId }: GenerateFormProps) {
             <div className="flex items-center justify-between rounded-lg border bg-muted/30 px-4 py-3">
               <div className="min-w-0">
                 <p className="truncate text-sm font-medium">{file.name}</p>
-                <p className="text-xs text-muted-foreground">{formatFileSize(file.size)}</p>
+                <p className="text-xs text-muted-foreground">
+                  {formatFileSize(file.size)}
+                </p>
               </div>
               <div className="ml-4 flex items-center gap-2 shrink-0">
                 <Button
@@ -194,7 +211,10 @@ export function GenerateForm({ deckId }: GenerateFormProps) {
                   disabled={isUploading}
                 >
                   {isUploading ? (
-                    <><Loader2 className="mr-2 h-3.5 w-3.5 animate-spin" /> Đang đọc...</>
+                    <>
+                      <Loader2 className="mr-2 h-3.5 w-3.5 animate-spin" /> Đang
+                      đọc...
+                    </>
                   ) : (
                     "Đọc file"
                   )}
@@ -283,16 +303,24 @@ export function GenerateForm({ deckId }: GenerateFormProps) {
                   ) : (
                     <Square className="h-4 w-4 text-muted-foreground shrink-0" />
                   )}
-                  <span className="text-xs font-medium text-muted-foreground">Thẻ {idx + 1}</span>
+                  <span className="text-xs font-medium text-muted-foreground">
+                    Thẻ {idx + 1}
+                  </span>
                 </div>
                 <div className="grid gap-2 sm:grid-cols-2">
                   <div>
-                    <p className="mb-1 text-xs font-medium text-muted-foreground">Câu hỏi</p>
+                    <p className="mb-1 text-xs font-medium text-muted-foreground">
+                      Câu hỏi
+                    </p>
                     <p className="text-sm">{card.question}</p>
                   </div>
                   <div>
-                    <p className="mb-1 text-xs font-medium text-muted-foreground">Câu trả lời</p>
-                    <p className="text-sm text-muted-foreground">{card.answer}</p>
+                    <p className="mb-1 text-xs font-medium text-muted-foreground">
+                      Câu trả lời
+                    </p>
+                    <p className="text-sm text-muted-foreground">
+                      {card.answer}
+                    </p>
                   </div>
                 </div>
               </div>
@@ -305,13 +333,18 @@ export function GenerateForm({ deckId }: GenerateFormProps) {
             className="w-full"
           >
             {isSaving ? (
-              <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Đang lưu...</>
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Đang lưu...
+              </>
             ) : (
-              <><Save className="mr-2 h-4 w-4" /> Lưu {selectedCards.length} thẻ đã chọn vào bộ thẻ</>
+              <>
+                <Save className="mr-2 h-4 w-4" /> Lưu {selectedCards.length} thẻ
+                đã chọn vào bộ thẻ
+              </>
             )}
           </Button>
         </div>
       )}
     </div>
-  )
+  );
 }

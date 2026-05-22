@@ -17,11 +17,13 @@ export default async function DecksPage() {
   // fetch decks with flashcard count and due count
   const { data } = await supabase
     .from("decks")
-    .select(`
+    .select(
+      `
       *,
       flashcard_count:flashcards(count),
       due_count:flashcards(card_progress(count))
-    `)
+    `,
+    )
     .eq("user_id", user.id)
     .order("updated_at", { ascending: false });
 
@@ -48,7 +50,7 @@ export default async function DecksPage() {
       flashcard_count: Array.isArray(counts)
         ? ((counts[0] as { count: number })?.count ?? 0)
         : 0,
-      due_count: dueCounts[(deck.id as string)] ?? 0,
+      due_count: dueCounts[deck.id as string] ?? 0,
     };
   }) as DeckWithCount[];
 

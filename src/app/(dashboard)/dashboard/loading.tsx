@@ -22,6 +22,14 @@ export default function DashboardLoading() {
           ))}
         </div>
       </div>
+
+      <div className="space-y-4">
+        <Skeleton className="h-6 w-44" />
+        <div className="grid gap-4 md:grid-cols-3">
+          <Skeleton className="md:col-span-2 h-72 rounded-xl" />
+          <Skeleton className="h-72 rounded-xl" />
+        </div>
+      </div>
     </div>
   );
 }

@@ -1,9 +1,9 @@
-"use client"
+"use client";
 
-import { useState, useTransition } from "react"
-import { Plus } from "lucide-react"
-import { toast } from "sonner"
-import { Button } from "@/components/ui/button"
+import { useState, useTransition } from "react";
+import { Plus } from "lucide-react";
+import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -11,29 +11,29 @@ import {
   DialogTitle,
   DialogTrigger,
   DialogFooter,
-} from "@/components/ui/dialog"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
-import { createDeck } from "@/actions/deck.actions"
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { createDeck } from "@/actions/deck.actions";
 
 export function CreateDeckDialog() {
-  const [open, setOpen] = useState(false)
-  const [isPending, startTransition] = useTransition()
+  const [open, setOpen] = useState(false);
+  const [isPending, startTransition] = useTransition();
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault()
-    const formData = new FormData(e.currentTarget)
+    e.preventDefault();
+    const formData = new FormData(e.currentTarget);
 
     startTransition(async () => {
-      const result = await createDeck(formData)
+      const result = await createDeck(formData);
       if (result.success) {
-        toast.success("Tạo bộ thẻ thành công!")
-        setOpen(false)
+        toast.success("Tạo bộ thẻ thành công!");
+        setOpen(false);
       } else {
-        toast.error(result.error ?? "Tạo bộ thẻ thất bại")
+        toast.error(result.error ?? "Tạo bộ thẻ thất bại");
       }
-    })
+    });
   }
 
   return (
@@ -75,5 +75,5 @@ export function CreateDeckDialog() {
         </form>
       </DialogContent>
     </Dialog>
-  )
+  );
 }

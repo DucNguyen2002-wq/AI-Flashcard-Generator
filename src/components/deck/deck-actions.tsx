@@ -1,64 +1,64 @@
-"use client"
+"use client";
 
-import { useState, useTransition } from "react"
-import { useRouter } from "next/navigation"
-import { MoreHorizontal, Pencil, Trash2 } from "lucide-react"
-import { toast } from "sonner"
+import { useState, useTransition } from "react";
+import { useRouter } from "next/navigation";
+import { MoreHorizontal, Pencil, Trash2 } from "lucide-react";
+import { toast } from "sonner";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
+} from "@/components/ui/dropdown-menu";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogFooter,
-} from "@/components/ui/dialog"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
-import { updateDeck, deleteDeck } from "@/actions/deck.actions"
-import type { DeckWithCount } from "@/types"
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { updateDeck, deleteDeck } from "@/actions/deck.actions";
+import type { DeckWithCount } from "@/types";
 
 interface DeckActionsProps {
-  deck: DeckWithCount
+  deck: DeckWithCount;
 }
 
 export function DeckActions({ deck }: DeckActionsProps) {
-  const router = useRouter()
-  const [editOpen, setEditOpen] = useState(false)
-  const [deleteOpen, setDeleteOpen] = useState(false)
-  const [isPending, startTransition] = useTransition()
+  const router = useRouter();
+  const [editOpen, setEditOpen] = useState(false);
+  const [deleteOpen, setDeleteOpen] = useState(false);
+  const [isPending, startTransition] = useTransition();
 
   async function handleEdit(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault()
-    const formData = new FormData(e.currentTarget)
+    e.preventDefault();
+    const formData = new FormData(e.currentTarget);
     startTransition(async () => {
-      const result = await updateDeck(deck.id, formData)
+      const result = await updateDeck(deck.id, formData);
       if (result.success) {
-        toast.success("Cập nhật bộ thẻ thành công!")
-        setEditOpen(false)
+        toast.success("Cập nhật bộ thẻ thành công!");
+        setEditOpen(false);
       } else {
-        toast.error(result.error ?? "Cập nhật thất bại")
+        toast.error(result.error ?? "Cập nhật thất bại");
       }
-    })
+    });
   }
 
   async function handleDelete() {
     startTransition(async () => {
-      const result = await deleteDeck(deck.id)
+      const result = await deleteDeck(deck.id);
       if (result.success) {
-        toast.success("Đã xoá bộ thẻ")
-        setDeleteOpen(false)
-        router.push("/dashboard/decks")
+        toast.success("Đã xoá bộ thẻ");
+        setDeleteOpen(false);
+        router.push("/dashboard/decks");
       } else {
-        toast.error(result.error ?? "Xoá thất bại")
+        toast.error(result.error ?? "Xoá thất bại");
       }
-    })
+    });
   }
 
   return (
@@ -126,15 +126,21 @@ export function DeckActions({ deck }: DeckActionsProps) {
             <DialogTitle>Xác nhận xoá bộ thẻ</DialogTitle>
           </DialogHeader>
           <p className="text-sm text-muted-foreground">
-            Bạn có chắc muốn xoá bộ thẻ <strong>"{deck.title}"</strong>? Thao tác này sẽ xoá tất cả flashcard và lịch sử học liên quan và không thể hoàn tác.
+            Bạn có chắc muốn xoá bộ thẻ <strong>"{deck.title}"</strong>? Thao
+            tác này sẽ xoá tất cả flashcard và lịch sử học liên quan và không
+            thể hoàn tác.
           </p>
           <DialogFooter showCloseButton>
-            <Button variant="destructive" onClick={handleDelete} disabled={isPending}>
+            <Button
+              variant="destructive"
+              onClick={handleDelete}
+              disabled={isPending}
+            >
               {isPending ? "Đang xoá..." : "Xoá bộ thẻ"}
             </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
     </>
-  )
+  );
 }

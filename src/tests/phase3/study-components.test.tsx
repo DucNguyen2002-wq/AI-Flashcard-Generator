@@ -29,7 +29,6 @@ const sampleCard: StudyCard = {
   question: "What is React?",
   answer: "A JavaScript library for building UIs",
   created_at: "2024-01-01T00:00:00Z",
-  updated_at: "2024-01-01T00:00:00Z",
   progress: null,
 };
 

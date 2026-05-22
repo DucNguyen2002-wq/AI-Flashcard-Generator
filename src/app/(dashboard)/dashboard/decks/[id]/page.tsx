@@ -49,9 +49,13 @@ export default async function DeckDetailPage({
   const now = new Date().toISOString();
   const progressMap = new Map(
     ((progressData as unknown[]) ?? []).map((p) => {
-      const row = p as { flashcard_id: string; next_review_at: string; interval_days: number };
+      const row = p as {
+        flashcard_id: string;
+        next_review_at: string;
+        interval_days: number;
+      };
       return [row.flashcard_id, row];
-    })
+    }),
   );
 
   const dueCount = flashcards.filter((c) => {

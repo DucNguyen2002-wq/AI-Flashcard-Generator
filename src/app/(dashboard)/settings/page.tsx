@@ -8,6 +8,8 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { PasswordChangeForm, DangerZone } from "@/components/settings/settings-forms";
 
 export default async function SettingsPage() {
   const supabase = await createClient();
@@ -16,6 +18,11 @@ export default async function SettingsPage() {
   } = await supabase.auth.getUser();
 
   if (!user) redirect("/login");
+
+  const initials = (user.email ?? "U")
+    .split("@")[0]
+    ?.slice(0, 2)
+    .toUpperCase() ?? "U";
 
   return (
     <div className="space-y-6 max-w-2xl">
@@ -33,34 +40,24 @@ export default async function SettingsPage() {
           <CardTitle>Thông tin tài khoản</CardTitle>
           <CardDescription>Chi tiết tài khoản đăng ký của bạn</CardDescription>
         </CardHeader>
-        <CardContent className="space-y-2">
-          <div>
-            <p className="text-sm font-medium">Email</p>
-            <p className="text-sm text-muted-foreground">{user.email}</p>
-          </div>
-          <div>
-            <p className="text-sm font-medium">Tham gia từ</p>
+        <CardContent className="flex items-center gap-4">
+          <Avatar size="lg" className="size-14">
+            <AvatarFallback className="text-lg font-semibold bg-primary text-primary-foreground">
+              {initials}
+            </AvatarFallback>
+          </Avatar>
+          <div className="space-y-1">
+            <p className="font-medium">{user.email}</p>
             <p className="text-sm text-muted-foreground">
-              {new Date(user.created_at).toLocaleDateString("vi-VN")}
+              Tham gia từ {new Date(user.created_at).toLocaleDateString("vi-VN")}
             </p>
           </div>
         </CardContent>
       </Card>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Tùy chỉnh</CardTitle>
-          <CardDescription>
-            Các tính năng cài đặt nâng cao sẽ sớm ra mắt
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <p className="text-sm text-muted-foreground">
-            Bao gồm: thay đổi mật khẩu, quản lý phiên đăng nhập, tùy chọn thông
-            báo...
-          </p>
-        </CardContent>
-      </Card>
+      <PasswordChangeForm />
+
+      <DangerZone email={user.email ?? ""} />
     </div>
   );
 }

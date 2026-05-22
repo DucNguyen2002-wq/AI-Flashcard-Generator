@@ -1,33 +1,36 @@
-import { redirect, notFound } from "next/navigation"
-import { createClient } from "@/lib/supabase/server"
-import { ArrowLeft, Sparkles } from "lucide-react"
-import Link from "next/link"
-import type { Deck } from "@/types"
-import { GenerateForm } from "@/components/flashcard/generate-form"
+import { redirect, notFound } from "next/navigation";
+import { createClient } from "@/lib/supabase/server";
+import { ArrowLeft, Sparkles } from "lucide-react";
+import Link from "next/link";
+import type { Deck } from "@/types";
+import { GenerateForm } from "@/components/flashcard/generate-form";
 
 export default async function GeneratePage({
   params,
 }: {
-  params: Promise<{ id: string }>
+  params: Promise<{ id: string }>;
 }) {
-  const { id } = await params
-  const supabase = await createClient()
+  const { id } = await params;
+  const supabase = await createClient();
   const {
     data: { user },
-  } = await supabase.auth.getUser()
+  } = await supabase.auth.getUser();
 
-  if (!user) redirect("/login")
+  if (!user) redirect("/login");
 
   const { data: deckData } = await supabase
     .from("decks")
     .select("id, title, description")
     .eq("id", id)
     .eq("user_id", user.id)
-    .single()
+    .single();
 
-  if (!deckData) notFound()
+  if (!deckData) notFound();
 
-  const deck = deckData as unknown as Pick<Deck, "id" | "title" | "description">
+  const deck = deckData as unknown as Pick<
+    Deck,
+    "id" | "title" | "description"
+  >;
 
   return (
     <div className="mx-auto max-w-2xl space-y-6">
@@ -42,15 +45,18 @@ export default async function GeneratePage({
         <div>
           <div className="flex items-center gap-2">
             <Sparkles className="h-5 w-5 text-primary" />
-            <h2 className="text-2xl font-bold tracking-tight">Sinh Flashcard AI</h2>
+            <h2 className="text-2xl font-bold tracking-tight">
+              Sinh Flashcard AI
+            </h2>
           </div>
           <p className="text-muted-foreground">
-            Bộ thẻ: <span className="font-medium text-foreground">{deck.title}</span>
+            Bộ thẻ:{" "}
+            <span className="font-medium text-foreground">{deck.title}</span>
           </p>
         </div>
       </div>
 
       <GenerateForm deckId={id} />
     </div>
-  )
+  );
 }

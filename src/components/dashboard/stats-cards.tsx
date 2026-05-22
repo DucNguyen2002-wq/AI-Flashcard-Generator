@@ -58,7 +58,10 @@ export function StatsCards({
     <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
       {stats.map((stat) => {
         const card = (
-          <Card key={stat.title} className={stat.href ? "transition-colors hover:bg-muted/50" : ""}>
+          <Card
+            key={stat.title}
+            className={stat.href ? "transition-colors hover:bg-muted/50" : ""}
+          >
             <CardHeader className="flex flex-row items-center justify-between pb-2">
               <CardTitle className="text-sm font-medium text-muted-foreground">
                 {stat.title}
@@ -72,15 +75,19 @@ export function StatsCards({
                   <span className="inline-flex h-2 w-2 animate-pulse rounded-full bg-amber-500" />
                 )}
               </div>
-              <p className="mt-1 text-xs text-muted-foreground">{stat.description}</p>
+              <p className="mt-1 text-xs text-muted-foreground">
+                {stat.description}
+              </p>
             </CardContent>
           </Card>
-        )
+        );
         return stat.href ? (
           <Link key={stat.title} href={stat.href}>
             {card}
           </Link>
-        ) : card
+        ) : (
+          card
+        );
       })}
     </div>
   );

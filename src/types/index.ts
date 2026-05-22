@@ -33,6 +33,7 @@ export type Database = {
           created_at?: string;
           updated_at?: string;
         };
+        Relationships: [];
       };
       flashcards: {
         Row: {
@@ -56,6 +57,7 @@ export type Database = {
           answer?: string;
           created_at?: string;
         };
+        Relationships: [];
       };
       card_progress: {
         Row: {
@@ -88,6 +90,7 @@ export type Database = {
           next_review_at?: string;
           last_reviewed_at?: string | null;
         };
+        Relationships: [];
       };
     };
     Views: Record<string, never>;

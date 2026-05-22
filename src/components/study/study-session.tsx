@@ -1,88 +1,108 @@
-"use client"
+"use client";
 
-import { useEffect, useState, useCallback } from "react"
-import { useRouter } from "next/navigation"
-import type { StudyCard, SM2Grade } from "@/types"
-import { updateCardProgress } from "@/actions/progress.actions"
-import { FlashcardCard } from "./flashcard-card"
-import { SessionComplete } from "./session-complete"
-import { Progress } from "@/components/ui/progress"
-import { Button } from "@/components/ui/button"
-import { X } from "lucide-react"
+import { useEffect, useState, useCallback } from "react";
+import { useRouter } from "next/navigation";
+import type { StudyCard, SM2Grade } from "@/types";
+import { updateCardProgress } from "@/actions/progress.actions";
+import { FlashcardCard } from "./flashcard-card";
+import { SessionComplete } from "./session-complete";
+import { Progress } from "@/components/ui/progress";
+import { Button } from "@/components/ui/button";
+import { X } from "lucide-react";
 
 interface StudySessionProps {
-  cards: StudyCard[]
-  deckId: string
-  deckTitle: string
+  cards: StudyCard[];
+  deckId: string;
+  deckTitle: string;
 }
 
 const GRADE_LABELS: { grade: SM2Grade; label: string; color: string }[] = [
-  { grade: 1, label: "Không nhớ", color: "bg-destructive hover:bg-destructive/90 text-destructive-foreground" },
-  { grade: 2, label: "Khó nhớ", color: "bg-orange-500 hover:bg-orange-500/90 text-white" },
-  { grade: 3, label: "Nhớ được", color: "bg-yellow-500 hover:bg-yellow-500/90 text-white" },
-  { grade: 4, label: "Dễ dàng", color: "bg-green-500 hover:bg-green-500/90 text-white" },
-]
+  {
+    grade: 1,
+    label: "Không nhớ",
+    color: "bg-destructive hover:bg-destructive/90 text-destructive-foreground",
+  },
+  {
+    grade: 2,
+    label: "Khó nhớ",
+    color: "bg-orange-500 hover:bg-orange-500/90 text-white",
+  },
+  {
+    grade: 3,
+    label: "Nhớ được",
+    color: "bg-yellow-500 hover:bg-yellow-500/90 text-white",
+  },
+  {
+    grade: 4,
+    label: "Dễ dàng",
+    color: "bg-green-500 hover:bg-green-500/90 text-white",
+  },
+];
 
 export function StudySession({ cards, deckId, deckTitle }: StudySessionProps) {
-  const router = useRouter()
-  const [currentIndex, setCurrentIndex] = useState(0)
-  const [isFlipped, setIsFlipped] = useState(false)
-  const [isFinished, setIsFinished] = useState(false)
-  const [sessionStats, setSessionStats] = useState({ correct: 0, incorrect: 0, startTime: Date.now() })
-  const [isRating, setIsRating] = useState(false)
+  const router = useRouter();
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [isFlipped, setIsFlipped] = useState(false);
+  const [isFinished, setIsFinished] = useState(false);
+  const [sessionStats, setSessionStats] = useState({
+    correct: 0,
+    incorrect: 0,
+    startTime: Date.now(),
+  });
+  const [isRating, setIsRating] = useState(false);
 
-  const currentCard = cards[currentIndex]
-  const progress = ((currentIndex) / cards.length) * 100
+  const currentCard = cards[currentIndex];
+  const progress = (currentIndex / cards.length) * 100;
 
   function handleFlip() {
-    setIsFlipped((f) => !f)
+    setIsFlipped((f) => !f);
   }
 
   const handleRate = useCallback(
     async (grade: SM2Grade) => {
-      if (!isFlipped || isRating) return
-      setIsRating(true)
+      if (!isFlipped || isRating) return;
+      setIsRating(true);
 
       // Update progress in background
-      await updateCardProgress(currentCard.id, grade)
+      await updateCardProgress(currentCard.id, grade);
 
       setSessionStats((prev) => ({
         ...prev,
         correct: grade >= 3 ? prev.correct + 1 : prev.correct,
         incorrect: grade < 3 ? prev.incorrect + 1 : prev.incorrect,
-      }))
+      }));
 
       // Short delay then advance
       setTimeout(() => {
-        setIsFlipped(false)
-        setIsRating(false)
+        setIsFlipped(false);
+        setIsRating(false);
         if (currentIndex + 1 >= cards.length) {
-          setIsFinished(true)
+          setIsFinished(true);
         } else {
-          setCurrentIndex((i) => i + 1)
+          setCurrentIndex((i) => i + 1);
         }
-      }, 300)
+      }, 300);
     },
-    [isFlipped, isRating, currentCard, currentIndex, cards.length]
-  )
+    [isFlipped, isRating, currentCard, currentIndex, cards.length],
+  );
 
   // Keyboard shortcuts
   useEffect(() => {
     function handleKey(e: KeyboardEvent) {
       if (e.key === " " || e.key === "Enter") {
-        e.preventDefault()
-        if (!isFlipped) handleFlip()
+        e.preventDefault();
+        if (!isFlipped) handleFlip();
       }
       if (isFlipped) {
-        if (e.key === "1") handleRate(1)
-        if (e.key === "2") handleRate(2)
-        if (e.key === "3") handleRate(3)
-        if (e.key === "4") handleRate(4)
+        if (e.key === "1") handleRate(1);
+        if (e.key === "2") handleRate(2);
+        if (e.key === "3") handleRate(3);
+        if (e.key === "4") handleRate(4);
       }
     }
-    window.addEventListener("keydown", handleKey)
-    return () => window.removeEventListener("keydown", handleKey)
-  }, [isFlipped, handleRate])
+    window.addEventListener("keydown", handleKey);
+    return () => window.removeEventListener("keydown", handleKey);
+  }, [isFlipped, handleRate]);
 
   if (isFinished) {
     return (
@@ -92,7 +112,7 @@ export function StudySession({ cards, deckId, deckTitle }: StudySessionProps) {
         durationMs={Date.now() - sessionStats.startTime}
         deckId={deckId}
       />
-    )
+    );
   }
 
   return (
@@ -119,7 +139,11 @@ export function StudySession({ cards, deckId, deckTitle }: StudySessionProps) {
       </div>
 
       {/* Card */}
-      <FlashcardCard card={currentCard} isFlipped={isFlipped} onFlip={handleFlip} />
+      <FlashcardCard
+        card={currentCard}
+        isFlipped={isFlipped}
+        onFlip={handleFlip}
+      />
 
       {/* Rating buttons */}
       {isFlipped ? (
@@ -145,9 +169,12 @@ export function StudySession({ cards, deckId, deckTitle }: StudySessionProps) {
       ) : (
         <p className="text-center text-sm text-muted-foreground">
           Nhấn vào thẻ hoặc phím{" "}
-          <kbd className="rounded border px-1 py-0.5 text-xs font-mono">Space</kbd> để xem câu trả lời
+          <kbd className="rounded border px-1 py-0.5 text-xs font-mono">
+            Space
+          </kbd>{" "}
+          để xem câu trả lời
         </p>
       )}
     </div>
-  )
+  );
 }

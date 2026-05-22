@@ -2,6 +2,19 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { StatsCards } from "@/components/dashboard/stats-cards";
 import { RecentDecks } from "@/components/dashboard/recent-decks";
+import { StudyChart } from "@/components/dashboard/study-chart";
+import { CardStatusChart } from "@/components/dashboard/card-status-chart";
+import {
+  getDailyStudyStats,
+  getCardStatusStats,
+  getStudyStreak,
+} from "@/actions/stats.actions";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import type { DeckWithCount } from "@/types";
 
 export default async function DashboardPage() {
@@ -12,22 +25,22 @@ export default async function DashboardPage() {
 
   if (!user) redirect("/login");
 
-  const [decksResult, flashcardsResult, dueResult] = await Promise.all([
-    supabase
-      .from("decks")
-      .select("*, flashcard_count:flashcards(count)")
-      .eq("user_id", user.id)
-      .order("updated_at", { ascending: false }),
-    supabase
-      .from("flashcards")
-      .select("id", { count: "exact", head: true })
-      .eq("user_id", user.id),
-    supabase
-      .from("card_progress")
-      .select("id", { count: "exact", head: true })
-      .eq("user_id", user.id)
-      .lte("next_review_at", new Date().toISOString()),
-  ]);
+  const [decksResult, dueResult, dailyStats, statusStats, streak] =
+    await Promise.all([
+      supabase
+        .from("decks")
+        .select("*, flashcard_count:flashcards(count)")
+        .eq("user_id", user.id)
+        .order("updated_at", { ascending: false }),
+      supabase
+        .from("card_progress")
+        .select("id", { count: "exact", head: true })
+        .eq("user_id", user.id)
+        .lte("next_review_at", new Date().toISOString()),
+      getDailyStudyStats(user.id, 7),
+      getCardStatusStats(user.id),
+      getStudyStreak(user.id),
+    ]);
 
   const decks = ((decksResult.data as unknown[]) ?? []).map((d) => {
     const deck = d as Record<string, unknown>;
@@ -41,7 +54,7 @@ export default async function DashboardPage() {
   }) as DeckWithCount[];
 
   const totalDecks = decks.length;
-  const totalFlashcards = flashcardsResult.count ?? 0;
+  const totalFlashcards = decks.reduce((sum, d) => sum + (d.flashcard_count ?? 0), 0);
   const dueToday = dueResult.count ?? 0;
 
   return (
@@ -59,7 +72,7 @@ export default async function DashboardPage() {
         totalDecks={totalDecks}
         totalFlashcards={totalFlashcards}
         dueToday={dueToday}
-        streak={0}
+        streak={streak}
       />
 
       <div>
@@ -67,6 +80,33 @@ export default async function DashboardPage() {
           <h3 className="text-lg font-semibold">Bộ thẻ gần đây</h3>
         </div>
         <RecentDecks decks={decks.slice(0, 4)} />
+      </div>
+
+      <div>
+        <h3 className="text-lg font-semibold mb-4">Thống kê học tập</h3>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <Card className="md:col-span-2">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm font-medium text-muted-foreground">
+                Hoạt động 7 ngày qua
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <StudyChart data={dailyStats} />
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm font-medium text-muted-foreground">
+                Phân loại thẻ
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <CardStatusChart data={statusStats} />
+            </CardContent>
+          </Card>
+        </div>
       </div>
     </div>
   );

@@ -1,8 +1,8 @@
-import type { DeckWithCount } from "@/types"
-import { DeckCard } from "./deck-card"
+import type { DeckWithCount } from "@/types";
+import { DeckCard } from "./deck-card";
 
 interface DeckListProps {
-  decks: DeckWithCount[]
+  decks: DeckWithCount[];
 }
 
 export function DeckList({ decks }: DeckListProps) {
@@ -14,7 +14,7 @@ export function DeckList({ decks }: DeckListProps) {
           Nhấn "Tạo bộ thẻ mới" để bắt đầu
         </p>
       </div>
-    )
+    );
   }
 
   return (
@@ -23,5 +23,5 @@ export function DeckList({ decks }: DeckListProps) {
         <DeckCard key={deck.id} deck={deck} />
       ))}
     </div>
-  )
+  );
 }

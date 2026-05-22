@@ -1,10 +1,10 @@
-"use client"
+"use client";
 
-import { useState, useTransition } from "react"
-import { format } from "date-fns"
-import { vi } from "date-fns/locale"
-import { Pencil, Trash2, Check, X } from "lucide-react"
-import { toast } from "sonner"
+import { useState, useTransition } from "react";
+import { format } from "date-fns";
+import { vi } from "date-fns/locale";
+import { Pencil, Trash2, Check, X } from "lucide-react";
+import { toast } from "sonner";
 import {
   Table,
   TableBody,
@@ -12,62 +12,62 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table"
-import { Button } from "@/components/ui/button"
-import { Textarea } from "@/components/ui/textarea"
-import { updateFlashcard, deleteFlashcard } from "@/actions/flashcard.actions"
-import type { Flashcard } from "@/types"
+} from "@/components/ui/table";
+import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
+import { updateFlashcard, deleteFlashcard } from "@/actions/flashcard.actions";
+import type { Flashcard } from "@/types";
 
 interface FlashcardTableProps {
-  flashcards: Flashcard[]
-  deckId: string
+  flashcards: Flashcard[];
+  deckId: string;
 }
 
 export function FlashcardTable({ flashcards, deckId }: FlashcardTableProps) {
-  const [editingId, setEditingId] = useState<string | null>(null)
-  const [editQuestion, setEditQuestion] = useState("")
-  const [editAnswer, setEditAnswer] = useState("")
-  const [isPending, startTransition] = useTransition()
-  const [deletingId, setDeletingId] = useState<string | null>(null)
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editQuestion, setEditQuestion] = useState("");
+  const [editAnswer, setEditAnswer] = useState("");
+  const [isPending, startTransition] = useTransition();
+  const [deletingId, setDeletingId] = useState<string | null>(null);
 
   function startEdit(card: Flashcard) {
-    setEditingId(card.id)
-    setEditQuestion(card.question)
-    setEditAnswer(card.answer)
+    setEditingId(card.id);
+    setEditQuestion(card.question);
+    setEditAnswer(card.answer);
   }
 
   function cancelEdit() {
-    setEditingId(null)
-    setEditQuestion("")
-    setEditAnswer("")
+    setEditingId(null);
+    setEditQuestion("");
+    setEditAnswer("");
   }
 
   function handleUpdate(id: string) {
-    const formData = new FormData()
-    formData.set("question", editQuestion)
-    formData.set("answer", editAnswer)
+    const formData = new FormData();
+    formData.set("question", editQuestion);
+    formData.set("answer", editAnswer);
     startTransition(async () => {
-      const result = await updateFlashcard(id, formData)
+      const result = await updateFlashcard(id, formData);
       if (result.success) {
-        toast.success("Cập nhật flashcard thành công!")
-        cancelEdit()
+        toast.success("Cập nhật flashcard thành công!");
+        cancelEdit();
       } else {
-        toast.error(result.error ?? "Cập nhật thất bại")
+        toast.error(result.error ?? "Cập nhật thất bại");
       }
-    })
+    });
   }
 
   function handleDelete(id: string) {
-    setDeletingId(id)
+    setDeletingId(id);
     startTransition(async () => {
-      const result = await deleteFlashcard(id, deckId)
+      const result = await deleteFlashcard(id, deckId);
       if (result.success) {
-        toast.success("Đã xoá flashcard")
+        toast.success("Đã xoá flashcard");
       } else {
-        toast.error(result.error ?? "Xoá thất bại")
+        toast.error(result.error ?? "Xoá thất bại");
       }
-      setDeletingId(null)
-    })
+      setDeletingId(null);
+    });
   }
 
   if (flashcards.length === 0) {
@@ -78,7 +78,7 @@ export function FlashcardTable({ flashcards, deckId }: FlashcardTableProps) {
           Thêm thủ công hoặc sinh bằng AI ở phía trên
         </p>
       </div>
-    )
+    );
   }
 
   return (
@@ -145,10 +145,14 @@ export function FlashcardTable({ flashcards, deckId }: FlashcardTableProps) {
                     <p className="truncate text-sm">{card.question}</p>
                   </TableCell>
                   <TableCell className="max-w-[200px]">
-                    <p className="truncate text-sm text-muted-foreground">{card.answer}</p>
+                    <p className="truncate text-sm text-muted-foreground">
+                      {card.answer}
+                    </p>
                   </TableCell>
                   <TableCell className="text-xs text-muted-foreground">
-                    {format(new Date(card.created_at), "dd/MM/yyyy", { locale: vi })}
+                    {format(new Date(card.created_at), "dd/MM/yyyy", {
+                      locale: vi,
+                    })}
                   </TableCell>
                   <TableCell>
                     <div className="flex items-center justify-end gap-1">
@@ -179,5 +183,5 @@ export function FlashcardTable({ flashcards, deckId }: FlashcardTableProps) {
         </TableBody>
       </Table>
     </div>
-  )
+  );
 }

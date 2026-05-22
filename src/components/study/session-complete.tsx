@@ -1,22 +1,22 @@
-"use client"
+"use client";
 
-import Link from "next/link"
-import { CheckCircle, RotateCcw, ArrowLeft } from "lucide-react"
-import { Button } from "@/components/ui/button"
+import Link from "next/link";
+import { CheckCircle, RotateCcw, ArrowLeft } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 interface SessionCompleteProps {
-  correct: number
-  total: number
-  durationMs: number
-  deckId: string
+  correct: number;
+  total: number;
+  durationMs: number;
+  deckId: string;
 }
 
 function formatDuration(ms: number) {
-  const totalSecs = Math.floor(ms / 1000)
-  const mins = Math.floor(totalSecs / 60)
-  const secs = totalSecs % 60
-  if (mins === 0) return `${secs} giây`
-  return `${mins} phút ${secs} giây`
+  const totalSecs = Math.floor(ms / 1000);
+  const mins = Math.floor(totalSecs / 60);
+  const secs = totalSecs % 60;
+  if (mins === 0) return `${secs} giây`;
+  return `${mins} phút ${secs} giây`;
 }
 
 export function SessionComplete({
@@ -25,14 +25,17 @@ export function SessionComplete({
   durationMs,
   deckId,
 }: SessionCompleteProps) {
-  const percentage = total > 0 ? Math.round((correct / total) * 100) : 0
-  const poor = total - correct
+  const percentage = total > 0 ? Math.round((correct / total) * 100) : 0;
+  const poor = total - correct;
 
-  let motivationalText = ""
-  if (percentage === 100) motivationalText = "Xuất sắc! Bạn nhớ tất cả các thẻ! 🎉"
-  else if (percentage >= 80) motivationalText = "Rất tốt! Tiếp tục duy trì nhé! 👍"
-  else if (percentage >= 60) motivationalText = "Khá tốt! Hãy ôn lại các thẻ chưa nhớ 💪"
-  else motivationalText = "Hãy tiếp tục luyện tập để ghi nhớ tốt hơn 📚"
+  let motivationalText = "";
+  if (percentage === 100)
+    motivationalText = "Xuất sắc! Bạn nhớ tất cả các thẻ! 🎉";
+  else if (percentage >= 80)
+    motivationalText = "Rất tốt! Tiếp tục duy trì nhé! 👍";
+  else if (percentage >= 60)
+    motivationalText = "Khá tốt! Hãy ôn lại các thẻ chưa nhớ 💪";
+  else motivationalText = "Hãy tiếp tục luyện tập để ghi nhớ tốt hơn 📚";
 
   return (
     <div className="mx-auto max-w-md space-y-8 text-center">
@@ -79,5 +82,5 @@ export function SessionComplete({
         </Link>
       </div>
     </div>
-  )
+  );
 }

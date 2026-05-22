@@ -1,34 +1,56 @@
-import { redirect } from "next/navigation"
-import { createClient } from "@/lib/supabase/server"
-import { Button } from "@/components/ui/button"
-import { Plus } from "lucide-react"
-import { RecentDecks } from "@/components/dashboard/recent-decks"
-import type { DeckWithCount } from "@/types"
+import { redirect } from "next/navigation";
+import { createClient } from "@/lib/supabase/server";
+import { DeckList } from "@/components/deck/deck-list";
+import { CreateDeckDialog } from "@/components/deck/create-deck-dialog";
+import type { DeckWithCount } from "@/types";
 
 export default async function DecksPage() {
-  const supabase = await createClient()
+  const supabase = await createClient();
   const {
     data: { user },
-  } = await supabase.auth.getUser()
+  } = await supabase.auth.getUser();
 
-  if (!user) redirect("/login")
+  if (!user) redirect("/login");
 
+  const now = new Date().toISOString();
+
+  // fetch decks with flashcard count and due count
   const { data } = await supabase
     .from("decks")
-    .select("*, flashcard_count:flashcards(count)")
+    .select(`
+      *,
+      flashcard_count:flashcards(count),
+      due_count:flashcards(card_progress(count))
+    `)
     .eq("user_id", user.id)
-    .order("updated_at", { ascending: false })
+    .order("updated_at", { ascending: false });
+
+  // Fetch due counts separately (card_progress where next_review_at <= now)
+  const { data: progressData } = await supabase
+    .from("card_progress")
+    .select("flashcard_id, flashcards!inner(deck_id)")
+    .eq("user_id", user.id)
+    .lte("next_review_at", now);
+
+  // Build due count per deck
+  const dueCounts: Record<string, number> = {};
+  ((progressData as unknown[]) ?? []).forEach((p) => {
+    const row = p as { flashcards: { deck_id: string } };
+    const deckId = row.flashcards?.deck_id;
+    if (deckId) dueCounts[deckId] = (dueCounts[deckId] ?? 0) + 1;
+  });
 
   const decks = ((data as unknown[]) ?? []).map((d) => {
-    const deck = d as Record<string, unknown>
-    const counts = deck.flashcard_count
+    const deck = d as Record<string, unknown>;
+    const counts = deck.flashcard_count;
     return {
       ...deck,
       flashcard_count: Array.isArray(counts)
-        ? (counts[0] as { count: number })?.count ?? 0
+        ? ((counts[0] as { count: number })?.count ?? 0)
         : 0,
-    }
-  }) as DeckWithCount[]
+      due_count: dueCounts[(deck.id as string)] ?? 0,
+    };
+  }) as DeckWithCount[];
 
   return (
     <div className="space-y-6">
@@ -39,13 +61,10 @@ export default async function DecksPage() {
             Quản lý các bộ thẻ ghi nhớ của bạn
           </p>
         </div>
-        <Button>
-          <Plus className="mr-2 h-4 w-4" />
-          Tạo bộ thẻ mới
-        </Button>
+        <CreateDeckDialog />
       </div>
 
-      <RecentDecks decks={decks} />
+      <DeckList decks={decks} />
     </div>
-  )
+  );
 }

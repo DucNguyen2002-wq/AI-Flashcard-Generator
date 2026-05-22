@@ -1,53 +1,54 @@
-"use client"
+"use client";
 
-import { useState, useTransition } from "react"
-import Link from "next/link"
-import { signUp } from "@/actions/auth.actions"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Alert, AlertDescription } from "@/components/ui/alert"
-import { Loader2, AlertCircle, CheckCircle2 } from "lucide-react"
+import { useState, useTransition } from "react";
+import Link from "next/link";
+import { signUp } from "@/actions/auth.actions";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Loader2, AlertCircle, CheckCircle2 } from "lucide-react";
 
 function getPasswordStrength(password: string): {
-  label: string
-  color: string
-  width: string
+  label: string;
+  color: string;
+  width: string;
 } {
-  if (password.length === 0) return { label: "", color: "", width: "0%" }
-  let score = 0
-  if (password.length >= 8) score++
-  if (password.length >= 12) score++
-  if (/[A-Z]/.test(password)) score++
-  if (/\d/.test(password)) score++
-  if (/[^A-Za-z0-9]/.test(password)) score++
+  if (password.length === 0) return { label: "", color: "", width: "0%" };
+  let score = 0;
+  if (password.length >= 8) score++;
+  if (password.length >= 12) score++;
+  if (/[A-Z]/.test(password)) score++;
+  if (/\d/.test(password)) score++;
+  if (/[^A-Za-z0-9]/.test(password)) score++;
 
-  if (score <= 2) return { label: "Yếu", color: "bg-red-500", width: "33%" }
-  if (score <= 3) return { label: "Trung bình", color: "bg-yellow-500", width: "66%" }
-  return { label: "Mạnh", color: "bg-green-500", width: "100%" }
+  if (score <= 2) return { label: "Yếu", color: "bg-red-500", width: "33%" };
+  if (score <= 3)
+    return { label: "Trung bình", color: "bg-yellow-500", width: "66%" };
+  return { label: "Mạnh", color: "bg-green-500", width: "100%" };
 }
 
 export function RegisterForm() {
-  const [error, setError] = useState<string | null>(null)
-  const [success, setSuccess] = useState(false)
-  const [password, setPassword] = useState("")
-  const [isPending, startTransition] = useTransition()
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState(false);
+  const [password, setPassword] = useState("");
+  const [isPending, startTransition] = useTransition();
 
-  const strength = getPasswordStrength(password)
+  const strength = getPasswordStrength(password);
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault()
-    setError(null)
-    const formData = new FormData(e.currentTarget)
+    e.preventDefault();
+    setError(null);
+    const formData = new FormData(e.currentTarget);
 
     startTransition(async () => {
-      const result = await signUp(formData)
+      const result = await signUp(formData);
       if (result.success) {
-        setSuccess(true)
+        setSuccess(true);
       } else {
-        setError(result.error ?? "Đăng ký thất bại")
+        setError(result.error ?? "Đăng ký thất bại");
       }
-    })
+    });
   }
 
   if (success) {
@@ -67,7 +68,7 @@ export function RegisterForm() {
           Quay về trang đăng nhập
         </Link>
       </div>
-    )
+    );
   }
 
   return (
@@ -121,8 +122,8 @@ export function RegisterForm() {
                     strength.label === "Mạnh"
                       ? "text-green-600"
                       : strength.label === "Trung bình"
-                      ? "text-yellow-600"
-                      : "text-red-600"
+                        ? "text-yellow-600"
+                        : "text-red-600"
                   }
                 >
                   {strength.label}
@@ -167,5 +168,5 @@ export function RegisterForm() {
         </Link>
       </p>
     </div>
-  )
+  );
 }

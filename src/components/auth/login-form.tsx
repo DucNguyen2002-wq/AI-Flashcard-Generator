@@ -1,43 +1,43 @@
-"use client"
+"use client";
 
-import { useState, useTransition } from "react"
-import { useRouter } from "next/navigation"
-import Link from "next/link"
-import { signIn } from "@/actions/auth.actions"
-import { createClient } from "@/lib/supabase/client"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Alert, AlertDescription } from "@/components/ui/alert"
-import { Separator } from "@/components/ui/separator"
-import { Loader2, AlertCircle } from "lucide-react"
+import { useState, useTransition } from "react";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
+import { signIn } from "@/actions/auth.actions";
+import { createClient } from "@/lib/supabase/client";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Separator } from "@/components/ui/separator";
+import { Loader2, AlertCircle } from "lucide-react";
 
 export function LoginForm() {
-  const [error, setError] = useState<string | null>(null)
-  const [isPending, startTransition] = useTransition()
-  const router = useRouter()
+  const [error, setError] = useState<string | null>(null);
+  const [isPending, startTransition] = useTransition();
+  const router = useRouter();
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault()
-    setError(null)
-    const formData = new FormData(e.currentTarget)
+    e.preventDefault();
+    setError(null);
+    const formData = new FormData(e.currentTarget);
 
     startTransition(async () => {
-      const result = await signIn(formData)
+      const result = await signIn(formData);
       if (result && !result.success) {
-        setError(result.error ?? "Đăng nhập thất bại")
+        setError(result.error ?? "Đăng nhập thất bại");
       }
-    })
+    });
   }
 
   async function handleGoogleLogin() {
-    const supabase = createClient()
+    const supabase = createClient();
     await supabase.auth.signInWithOAuth({
       provider: "google",
       options: {
         redirectTo: `${window.location.origin}/auth/callback`,
       },
-    })
+    });
   }
 
   return (
@@ -137,5 +137,5 @@ export function LoginForm() {
         </Link>
       </p>
     </div>
-  )
+  );
 }

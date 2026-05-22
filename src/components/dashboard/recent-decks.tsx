@@ -1,11 +1,11 @@
-import Link from "next/link"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { BookOpen, Plus } from "lucide-react"
-import type { DeckWithCount } from "@/types"
+import Link from "next/link";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { BookOpen, Plus } from "lucide-react";
+import type { DeckWithCount } from "@/types";
 
 interface RecentDecksProps {
-  decks: DeckWithCount[]
+  decks: DeckWithCount[];
 }
 
 export function RecentDecks({ decks }: RecentDecksProps) {
@@ -29,7 +29,7 @@ export function RecentDecks({ decks }: RecentDecksProps) {
           </Link>
         </CardContent>
       </Card>
-    )
+    );
   }
 
   return (
@@ -42,7 +42,6 @@ export function RecentDecks({ decks }: RecentDecksProps) {
                 <CardTitle className="text-base leading-tight line-clamp-2">
                   {deck.title}
                 </CardTitle>
-
               </div>
             </CardHeader>
             <CardContent>
@@ -59,5 +58,5 @@ export function RecentDecks({ decks }: RecentDecksProps) {
         </Link>
       ))}
     </div>
-  )
+  );
 }

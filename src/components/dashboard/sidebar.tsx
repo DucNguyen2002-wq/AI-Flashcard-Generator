@@ -1,19 +1,19 @@
-"use client"
+"use client";
 
-import Link from "next/link"
-import { usePathname } from "next/navigation"
-import { cn } from "@/lib/utils"
-import { signOut } from "@/actions/auth.actions"
-import { Button } from "@/components/ui/button"
-import { Avatar, AvatarFallback } from "@/components/ui/avatar"
-import { Separator } from "@/components/ui/separator"
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { cn } from "@/lib/utils";
+import { signOut } from "@/actions/auth.actions";
+import { Button } from "@/components/ui/button";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Separator } from "@/components/ui/separator";
 import {
   BookOpen,
   LayoutDashboard,
   Library,
   Settings,
   LogOut,
-} from "lucide-react"
+} from "lucide-react";
 
 const navItems = [
   {
@@ -31,15 +31,15 @@ const navItems = [
     label: "Cài đặt",
     icon: Settings,
   },
-]
+];
 
 interface SidebarContentProps {
-  userEmail?: string
-  onNavigate?: () => void
+  userEmail?: string;
+  onNavigate?: () => void;
 }
 
 export function SidebarContent({ userEmail, onNavigate }: SidebarContentProps) {
-  const pathname = usePathname()
+  const pathname = usePathname();
 
   return (
     <div className="flex h-full flex-col">
@@ -57,7 +57,7 @@ export function SidebarContent({ userEmail, onNavigate }: SidebarContentProps) {
           const isActive =
             item.href === "/dashboard"
               ? pathname === "/dashboard"
-              : pathname.startsWith(item.href)
+              : pathname.startsWith(item.href);
           return (
             <Link
               key={item.href}
@@ -67,13 +67,13 @@ export function SidebarContent({ userEmail, onNavigate }: SidebarContentProps) {
                 "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
                 isActive
                   ? "bg-primary text-primary-foreground"
-                  : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+                  : "text-muted-foreground hover:bg-accent hover:text-accent-foreground",
               )}
             >
               <item.icon className="h-4 w-4 shrink-0" />
               {item.label}
             </Link>
-          )
+          );
         })}
       </nav>
 
@@ -104,5 +104,5 @@ export function SidebarContent({ userEmail, onNavigate }: SidebarContentProps) {
         </form>
       </div>
     </div>
-  )
+  );
 }

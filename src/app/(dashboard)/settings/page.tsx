@@ -1,15 +1,21 @@
-import { redirect } from "next/navigation"
-import { createClient } from "@/lib/supabase/server"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Separator } from "@/components/ui/separator"
+import { redirect } from "next/navigation";
+import { createClient } from "@/lib/supabase/server";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Separator } from "@/components/ui/separator";
 
 export default async function SettingsPage() {
-  const supabase = await createClient()
+  const supabase = await createClient();
   const {
     data: { user },
-  } = await supabase.auth.getUser()
+  } = await supabase.auth.getUser();
 
-  if (!user) redirect("/login")
+  if (!user) redirect("/login");
 
   return (
     <div className="space-y-6 max-w-2xl">
@@ -44,14 +50,17 @@ export default async function SettingsPage() {
       <Card>
         <CardHeader>
           <CardTitle>Tùy chỉnh</CardTitle>
-          <CardDescription>Các tính năng cài đặt nâng cao sẽ sớm ra mắt</CardDescription>
+          <CardDescription>
+            Các tính năng cài đặt nâng cao sẽ sớm ra mắt
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <p className="text-sm text-muted-foreground">
-            Bao gồm: thay đổi mật khẩu, quản lý phiên đăng nhập, tùy chọn thông báo...
+            Bao gồm: thay đổi mật khẩu, quản lý phiên đăng nhập, tùy chọn thông
+            báo...
           </p>
         </CardContent>
       </Card>
     </div>
-  )
+  );
 }

@@ -1,20 +1,20 @@
-"use client"
+"use client";
 
-import { useEffect } from "react"
-import Link from "next/link"
-import { Button } from "@/components/ui/button"
-import { AlertTriangle } from "lucide-react"
+import { useEffect } from "react";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { AlertTriangle } from "lucide-react";
 
 export default function AuthError({
   error,
   reset,
 }: {
-  error: Error & { digest?: string }
-  reset: () => void
+  error: Error & { digest?: string };
+  reset: () => void;
 }) {
   useEffect(() => {
-    console.error(error)
-  }, [error])
+    console.error(error);
+  }, [error]);
 
   return (
     <div className="flex flex-col items-center gap-4 py-4 text-center">
@@ -37,5 +37,5 @@ export default function AuthError({
         </Link>
       </div>
     </div>
-  )
+  );
 }

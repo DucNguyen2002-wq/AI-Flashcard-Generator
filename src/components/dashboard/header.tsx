@@ -1,36 +1,36 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { usePathname } from "next/navigation"
-import { Moon, Sun, Menu } from "lucide-react"
-import { useTheme } from "next-themes"
-import { Button } from "@/components/ui/button"
-import { Avatar, AvatarFallback } from "@/components/ui/avatar"
+import { useState } from "react";
+import { usePathname } from "next/navigation";
+import { Moon, Sun, Menu } from "lucide-react";
+import { useTheme } from "next-themes";
+import { Button } from "@/components/ui/button";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import {
   Sheet,
   SheetContent,
   SheetHeader,
   SheetTitle,
   SheetTrigger,
-} from "@/components/ui/sheet"
-import { SidebarContent } from "./sidebar"
+} from "@/components/ui/sheet";
+import { SidebarContent } from "./sidebar";
 
 const routeLabels: Record<string, string> = {
   "/dashboard": "Tổng quan",
   "/dashboard/decks": "Bộ thẻ của tôi",
   "/settings": "Cài đặt",
-}
+};
 
 interface HeaderProps {
-  userEmail?: string
+  userEmail?: string;
 }
 
 export function Header({ userEmail }: HeaderProps) {
-  const pathname = usePathname()
-  const { theme, setTheme } = useTheme()
-  const [open, setOpen] = useState(false)
+  const pathname = usePathname();
+  const { theme, setTheme } = useTheme();
+  const [open, setOpen] = useState(false);
 
-  const pageTitle = routeLabels[pathname] ?? "AI Flashcard"
+  const pageTitle = routeLabels[pathname] ?? "AI Flashcard";
 
   return (
     <header className="sticky top-0 z-30 flex h-14 items-center gap-4 border-b bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60 px-4">
@@ -74,5 +74,5 @@ export function Header({ userEmail }: HeaderProps) {
         </AvatarFallback>
       </Avatar>
     </header>
-  )
+  );
 }

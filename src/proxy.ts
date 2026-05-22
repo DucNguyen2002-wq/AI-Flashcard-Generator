@@ -1,29 +1,29 @@
-import { NextRequest, NextResponse } from 'next/server'
-import { updateSession } from '@/lib/supabase/middleware'
+import { NextRequest, NextResponse } from "next/server";
+import { updateSession } from "@/lib/supabase/middleware";
 
 export async function proxy(request: NextRequest) {
-  const { supabaseResponse, user } = await updateSession(request)
-  const pathname = request.nextUrl.pathname
+  const { supabaseResponse, user } = await updateSession(request);
+  const pathname = request.nextUrl.pathname;
 
   // Protect all /dashboard routes
-  if (pathname.startsWith('/dashboard')) {
+  if (pathname.startsWith("/dashboard")) {
     if (!user) {
-      const loginUrl = request.nextUrl.clone()
-      loginUrl.pathname = '/login'
-      return NextResponse.redirect(loginUrl)
+      const loginUrl = request.nextUrl.clone();
+      loginUrl.pathname = "/login";
+      return NextResponse.redirect(loginUrl);
     }
   }
 
   // Redirect authenticated users away from auth pages
-  if (pathname === '/login' || pathname === '/register') {
+  if (pathname === "/login" || pathname === "/register") {
     if (user) {
-      const dashboardUrl = request.nextUrl.clone()
-      dashboardUrl.pathname = '/dashboard'
-      return NextResponse.redirect(dashboardUrl)
+      const dashboardUrl = request.nextUrl.clone();
+      dashboardUrl.pathname = "/dashboard";
+      return NextResponse.redirect(dashboardUrl);
     }
   }
 
-  return supabaseResponse
+  return supabaseResponse;
 }
 
 export const config = {
@@ -35,6 +35,6 @@ export const config = {
      * - favicon.ico, sitemap.xml, robots.txt
      * - public folder files
      */
-    '/((?!_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
+    "/((?!_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
   ],
-}
+};

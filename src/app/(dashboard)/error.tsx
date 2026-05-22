@@ -1,19 +1,19 @@
-"use client"
+"use client";
 
-import { useEffect } from "react"
-import { Button } from "@/components/ui/button"
-import { AlertTriangle } from "lucide-react"
+import { useEffect } from "react";
+import { Button } from "@/components/ui/button";
+import { AlertTriangle } from "lucide-react";
 
 export default function DashboardError({
   error,
   reset,
 }: {
-  error: Error & { digest?: string }
-  reset: () => void
+  error: Error & { digest?: string };
+  reset: () => void;
 }) {
   useEffect(() => {
-    console.error(error)
-  }, [error])
+    console.error(error);
+  }, [error]);
 
   return (
     <div className="flex flex-col items-center justify-center py-20 gap-4 text-center">
@@ -26,5 +26,5 @@ export default function DashboardError({
       </div>
       <Button onClick={reset}>Thử lại</Button>
     </div>
-  )
+  );
 }

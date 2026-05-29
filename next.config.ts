@@ -10,6 +10,11 @@ const nextConfig: NextConfig = {
         hostname: "zgdgwdwgxoavfjhjosjf.supabase.co",
         pathname: "/storage/v1/object/**",
       },
+      // Unsplash CDN – dùng cho ảnh minh họa trên landing page
+      {
+        protocol: "https",
+        hostname: "images.unsplash.com",
+      },
     ],
   },
 };

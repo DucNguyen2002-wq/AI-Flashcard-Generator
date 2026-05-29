@@ -117,6 +117,14 @@
   --sidebar-ring: oklch(0.556 0 0);
 }
 
+/* Dot-grid pattern color adapts to light/dark mode */
+:root {
+  --dot-grid: rgba(0, 0, 0, 0.045);
+}
+.dark {
+  --dot-grid: rgba(255, 255, 255, 0.04);
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;

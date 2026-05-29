@@ -1,7 +1,7 @@
 import { redirect, notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { getStudyCards } from "@/actions/progress.actions";
-import type { Deck } from "@/types";
+import type { Deck, Flashcard, StudyCard } from "@/types";
 import { StudySession } from "@/components/study/study-session";
 import { NoCardsState } from "@/components/study/no-cards-state";
 
@@ -35,20 +35,34 @@ export default async function StudyPage({
   const studyCards = await getStudyCards(id);
 
   if (studyCards.length === 0) {
-    // Find the next scheduled review time
-    const { data: nextProgress } = await supabase
-      .from("card_progress")
-      .select("next_review_at")
-      .eq("user_id", user.id)
-      .order("next_review_at", { ascending: true })
-      .limit(1)
-      .maybeSingle();
+    // Check if deck has any flashcards at all
+    const { data: allFlashcardsData } = await supabase
+      .from("flashcards")
+      .select("*")
+      .eq("deck_id", id)
+      .order("created_at", { ascending: true });
 
-    const nextReviewAt = nextProgress
-      ? (nextProgress as { next_review_at: string }).next_review_at
-      : null;
+    const allFlashcards = (allFlashcardsData ?? []) as unknown[] as Flashcard[];
 
-    return <NoCardsState deckId={id} nextReviewAt={nextReviewAt} />;
+    if (allFlashcards.length === 0) {
+      // Deck is truly empty
+      return <NoCardsState deckId={id} />;
+    }
+
+    // Cards exist but none are due today — review all anyway
+    const reviewAll: StudyCard[] = allFlashcards.map((f) => ({
+      ...f,
+      progress: null,
+    }));
+    const shuffled = reviewAll.sort(() => Math.random() - 0.5);
+    return (
+      <StudySession
+        cards={shuffled}
+        deckId={id}
+        deckTitle={deck.title}
+        isReviewAll
+      />
+    );
   }
 
   return <StudySession cards={studyCards} deckId={id} deckTitle={deck.title} />;

@@ -8,12 +8,13 @@ import { FlashcardCard } from "./flashcard-card";
 import { SessionComplete } from "./session-complete";
 import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
-import { X } from "lucide-react";
+import { X, RefreshCw } from "lucide-react";
 
 interface StudySessionProps {
   cards: StudyCard[];
   deckId: string;
   deckTitle: string;
+  isReviewAll?: boolean;
 }
 
 const GRADE_LABELS: { grade: SM2Grade; label: string; color: string }[] = [
@@ -39,7 +40,12 @@ const GRADE_LABELS: { grade: SM2Grade; label: string; color: string }[] = [
   },
 ];
 
-export function StudySession({ cards, deckId, deckTitle }: StudySessionProps) {
+export function StudySession({
+  cards,
+  deckId,
+  deckTitle,
+  isReviewAll,
+}: StudySessionProps) {
   const router = useRouter();
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isFlipped, setIsFlipped] = useState(false);
@@ -117,6 +123,13 @@ export function StudySession({ cards, deckId, deckTitle }: StudySessionProps) {
 
   return (
     <div className="mx-auto max-w-2xl space-y-6">
+      {/* Review-all banner */}
+      {isReviewAll && (
+        <div className="flex items-center gap-2 rounded-lg border border-blue-200 bg-blue-50 px-4 py-2.5 text-sm text-blue-700 dark:border-blue-800 dark:bg-blue-950/40 dark:text-blue-300">
+          <RefreshCw className="h-4 w-4 shrink-0" />
+          <span>Không có thẻ đến hạn hôm nay — đang ôn lại toàn bộ bộ thẻ</span>
+        </div>
+      )}
       {/* Top bar */}
       <div className="flex items-center gap-4">
         <div className="flex-1">
